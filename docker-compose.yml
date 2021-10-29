@@ -4,31 +4,26 @@ services:
     build:
       context: .
       dockerfile: tomcat/Dockerfile
+    links:
+      - postgres
     ports:
       - '8085:8085'
     working_dir: /opt/tomcat
-    volumes:
-      - ./tomcat/config/context.xml:/opt/tomcat/conf/context.xml
-      - ./tomcat/config/server.xml:/opt/tomcat/conf/server.xml
-      - ./tomcat/config/tomcat-users.xml:/opt/tomcat/conf/tomcat-users.xml
-      - ./tomcat/config/web.xml:/opt/tomcat/conf/web.xml
-      - ./tomcat/config/manager/context.xml:/opt/tomcat/webapps/manager/META-INF/context.xml
-  jenkins:
-    build:
-      context: .
-      dockerfile: jenkins/Dockerfile
+  maven:
+    image: maven
+    working_dir: /usr/src/mymaven
+    command: mvn clean tomcat7:redeploy
     links:
       - tomcat
-    ports:
-      - '8080:8080'
     volumes:
-      - ./jenkins/config/maven/settings.xml:/usr/share/maven/conf/settings.xml
+      - ./:/usr/src/mymaven
       - maven-repo:/root/.m2
+      - ./maven/config/settings.xml:/usr/share/maven/conf/settings.xml
   postgres:
     image: postgres:12.1
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_pass
     ports:
       - '5432:5432'
     volumes:
