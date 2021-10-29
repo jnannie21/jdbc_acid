@@ -15,8 +15,8 @@ import java.sql.Statement;
 
 public class MainServlet extends HttpServlet {
 //    static final String DB_URL = "jdbc:postgres://postgres/postgres";
-    static final String USER = "admin";
-    static final String PASS = "admin";
+//    static final String USER = "postgres_user";
+//    static final String PASS = "postgres_pass";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)

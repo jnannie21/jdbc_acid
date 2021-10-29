@@ -41,7 +41,7 @@
                 <configuration>
                     <url>http://tomcat:8085/manager/text</url>
                     <server>TomcatServer</server>
-                    <path>/jenkinsproject</path>
+                    <path>/</path>
                 </configuration>
             </plugin>
         </plugins>

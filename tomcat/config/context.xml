@@ -21,7 +21,7 @@
     <Resource name="jdbc/postgres" auth="Container"
               type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
               url="jdbc:postgresql://postgres:5432/postgres"
-              username="postgres_user" password="postgres_pass" maxTotal="20" maxIdle="10" maxWaitMillis="-1"/>
+              username="admin" password="admin" maxTotal="20" maxIdle="10" maxWaitMillis="-1"/>
 
     <!-- Default set of monitored resources. If one of these changes, the    -->
     <!-- web application will be reloaded.                                   -->
