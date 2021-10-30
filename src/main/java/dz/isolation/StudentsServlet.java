@@ -44,7 +44,7 @@ public class StudentsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         System.out.println("req.getParameter()");
-        System.out.println(req.getParameter("change"));
+        System.out.println(req.getParameter("id"));
         System.out.println("req.getServletPath()");
         System.out.println(req.getServletPath());
 
@@ -55,9 +55,9 @@ public class StudentsServlet extends HttpServlet {
 
     private void routeRequest(HttpServletRequest req) {
         if (req.getServletPath().equals("/change_student")) {
-            changeStudent(req.getParameter("change"));
+            changeStudent(req.getParameter("id"));
         } else if (req.getServletPath().equals("/delete_student")) {
-            deleteStudent(req.getParameter("delete"));
+            deleteStudent(req.getParameter("id"));
         }
     }
 
