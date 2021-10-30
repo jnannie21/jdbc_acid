@@ -1,7 +1,5 @@
 package dz.isolation.service;
 
-import dz.isolation.model.LiquorType;
-
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -10,12 +8,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class UsersService {
+public class StudentService {
     DataSource ds;
+    private static final String tableName = "student";
 
-    public UsersService() {
+    public StudentService() {
         try {
             ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
+            new TeamService();
             createTable();
         } catch (NamingException e) {
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
@@ -29,42 +29,47 @@ public class UsersService {
             if (tableExists(conn)) {
                 return ;
             }
-            String sql = "CREATE TABLE USERS " +
-                    "(id INTEGER not NULL, " +
+            String sql = "CREATE TABLE " +
+                    tableName +
+                    " (id INTEGER not NULL, " +
                     " first_name VARCHAR(255), " +
                     " last_name VARCHAR(255), " +
                     " age INTEGER, " +
                     " points INTEGER, " +
-                    " PRIMARY KEY ( id ))";
+                    " team_id INTEGER not NULL, " +
+                    " PRIMARY KEY (id), " +
+                    " CONSTRAINT fk_team " +
+                    " FOREIGN KEY(team_id) " +
+                    " REFERENCES team(id)) ";
 
             stmt.executeUpdate(sql);
-            System.out.println("Table created...");
+            System.out.println("Table " + tableName + " created...");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public List<HashMap<String, String>> getUsers() {
-        List<HashMap<String, String>> users = new ArrayList<>();
+    public List<HashMap<String, String>> getStudents() {
+        List<HashMap<String, String>> students = new ArrayList<>();
 
-        String sql = "select * from users";
+        String sql = "select * from " + tableName;
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery()
         ) {
             while (rs.next()) {
-                HashMap<String, String> user = new HashMap<>();
-                user.put("id", rs.getString("id"));
-                user.put("first_name", rs.getString("first_name"));
-                user.put("last_name", rs.getString("last_name"));
-                user.put("age", rs.getString("age"));
-                user.put("points", rs.getString("points"));
-                users.add(user);
+                HashMap<String, String> student = new HashMap<>();
+                student.put("id", rs.getString("id"));
+                student.put("first_name", rs.getString("first_name"));
+                student.put("last_name", rs.getString("last_name"));
+                student.put("age", rs.getString("age"));
+                student.put("points", rs.getString("points"));
+                students.add(student);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return users;
+        return students;
     }
 
     private boolean tableExists(Connection conn) throws SQLException {
@@ -72,7 +77,7 @@ public class UsersService {
         ResultSet resultSet = meta.getTables(
                 null,
                 null,
-                "users",
+                tableName,
                 new String[] {"TABLE"}
         );
         return resultSet.next();

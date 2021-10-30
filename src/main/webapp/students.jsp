@@ -2,7 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Users table</title>
+    <title>Students table</title>
 </head>
 <body>
     <h1>
@@ -28,16 +28,15 @@
 <%--        </tr>--%>
 
         <%
-            List<HashMap<String, String>> users = (List<HashMap<String, String>>)request.getAttribute("users");
-//            System.out.println(users);
+            List<HashMap<String, String>> users = (List<HashMap<String, String>>)request.getAttribute("students");
             Iterator<HashMap<String, String>> it = users.iterator();
             while(it.hasNext()){
-                HashMap<String, String> user = it.next();
+                HashMap<String, String> student = it.next();
                 out.println("<tr>");
-                out.println("<td>" + user.get("id") + "</td>");
-                out.println("<td>" + user.get("first_name") + "</td>");
-                out.println("<td>" + user.get("last_name") + "</td>");
-                out.println("<td>" + user.get("age") + "</td>");
+                out.println("<td>" + student.get("id") + "</td>");
+                out.println("<td>" + student.get("first_name") + "</td>");
+                out.println("<td>" + student.get("last_name") + "</td>");
+                out.println("<td>" + student.get("age") + "</td>");
                 out.println("<td><button>Change</button></td>");
                 out.println("<td><button>Delete</button></td>");
                 out.println("</tr>");

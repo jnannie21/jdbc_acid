@@ -15,7 +15,7 @@
 
 <!--    <servlet>-->
 <!--        <servlet-name>usersservlet</servlet-name>-->
-<!--        <servlet-class>dz.isolation.UsersServlet</servlet-class>-->
+<!--        <servlet-class>dz.isolation.StudentsServlet</servlet-class>-->
 <!--    </servlet>-->
 <!--    <servlet-mapping>-->
 <!--        <servlet-name>usersservlet</servlet-name>-->

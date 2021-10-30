@@ -1,7 +1,7 @@
 package dz.isolation;
 
 import dz.isolation.model.LiquorType;
-import dz.isolation.service.UsersService;
+import dz.isolation.service.StudentService;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -17,26 +17,26 @@ import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet(
-        name = "usersservlet",
+        name = "studentsservlet",
         urlPatterns = "/"
 )
-public class UsersServlet extends HttpServlet {
-    private UsersService usersService;
+public class StudentsServlet extends HttpServlet {
+    private StudentService studentService;
     private DataSource ds;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        usersService = new UsersService();
+        studentService = new StudentService();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List users = usersService.getUsers();
+        List students = studentService.getStudents();
 
-        req.setAttribute("users", users);
-        RequestDispatcher view = req.getRequestDispatcher("users.jsp");
+        req.setAttribute("students", students);
+        RequestDispatcher view = req.getRequestDispatcher("students.jsp");
         view.forward(req, resp);
     }
 
@@ -50,7 +50,7 @@ public class UsersServlet extends HttpServlet {
 //        List users = usersService.getUsers(l);
 //
 //        req.setAttribute("users", users);
-//        RequestDispatcher view = req.getRequestDispatcher("users.jsp");
+//        RequestDispatcher view = req.getRequestDispatcher("students.jsp");
 //        view.forward(req, resp);
 //    }
 }
