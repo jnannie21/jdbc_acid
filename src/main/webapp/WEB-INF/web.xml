@@ -14,12 +14,12 @@
 <!--    </servlet-mapping>-->
 
 <!--    <servlet>-->
-<!--        <servlet-name>selectliquorservlet</servlet-name>-->
-<!--        <servlet-class>dz.isolation.SelectLiquorServlet</servlet-class>-->
+<!--        <servlet-name>usersservlet</servlet-name>-->
+<!--        <servlet-class>dz.isolation.UsersServlet</servlet-class>-->
 <!--    </servlet>-->
 <!--    <servlet-mapping>-->
-<!--        <servlet-name>selectliquorservlet</servlet-name>-->
-<!--        <url-pattern>/SelectLiquor</url-pattern>-->
+<!--        <servlet-name>usersservlet</servlet-name>-->
+<!--        <url-pattern>/users</url-pattern>-->
 <!--    </servlet-mapping>-->
 
 </web-app>

@@ -2,6 +2,8 @@ package dz.isolation.service;
 
 import dz.isolation.model.LiquorType;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,14 +13,22 @@ import java.util.List;
 public class UsersService {
     DataSource ds;
 
-    public UsersService(DataSource dataSource) {
-        this.ds = dataSource;
+    public UsersService() {
+        try {
+            ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
+            createTable();
+        } catch (NamingException e) {
+            throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
+        }
     }
 
     public void createTable() {
         try(Connection conn = ds.getConnection();
             Statement stmt = conn.createStatement();
         ) {
+            if (tableExists(conn)) {
+                return ;
+            }
             String sql = "CREATE TABLE USERS " +
                     "(id INTEGER not NULL, " +
                     " first_name VARCHAR(255), " +
@@ -55,5 +65,16 @@ public class UsersService {
             e.printStackTrace();
         }
         return users;
+    }
+
+    private boolean tableExists(Connection conn) throws SQLException {
+        DatabaseMetaData meta = conn.getMetaData();
+        ResultSet resultSet = meta.getTables(
+                null,
+                null,
+                "users",
+                new String[] {"TABLE"}
+        );
+        return resultSet.next();
     }
 }

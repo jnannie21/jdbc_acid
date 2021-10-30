@@ -18,7 +18,7 @@ import java.util.List;
 
 @WebServlet(
         name = "usersservlet",
-        urlPatterns = "/users"
+        urlPatterns = "/"
 )
 public class UsersServlet extends HttpServlet {
     private UsersService usersService;
@@ -27,13 +27,7 @@ public class UsersServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        try {
-            ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
-            usersService = new UsersService(ds);
-            usersService.createTable();
-        } catch (NamingException e) {
-            throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
-        }
+        usersService = new UsersService();
     }
 
     @Override
