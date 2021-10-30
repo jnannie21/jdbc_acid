@@ -37,16 +37,26 @@ public class UsersServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        String liquorType = req.getParameter("Type");
+        List users = usersService.getUsers();
 
-        LiquorType l = LiquorType.valueOf(liquorType);
-
-        List liquorBrands = usersService.getAvailableBrands(l);
-
-        req.setAttribute("brands", liquorBrands);
-        RequestDispatcher view = req.getRequestDispatcher("result.jsp");
+        req.setAttribute("users", users);
+        RequestDispatcher view = req.getRequestDispatcher("users.jsp");
         view.forward(req, resp);
     }
+
+//    @Override
+//    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+//            throws ServletException, IOException {
+//        String liquorType = req.getParameter("Type");
+//
+//        LiquorType l = LiquorType.valueOf(liquorType);
+//
+//        List users = usersService.getUsers(l);
+//
+//        req.setAttribute("users", users);
+//        RequestDispatcher view = req.getRequestDispatcher("users.jsp");
+//        view.forward(req, resp);
+//    }
 }

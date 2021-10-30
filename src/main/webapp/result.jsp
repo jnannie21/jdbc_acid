@@ -4,7 +4,7 @@
     <body>
     <center>
     <h1>
-        Available Brands
+        Available users
     </h1>
     <%
         List result = (List) request.getAttribute("brands");

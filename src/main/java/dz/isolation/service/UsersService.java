@@ -3,10 +3,9 @@ package dz.isolation.service;
 import dz.isolation.model.LiquorType;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class UsersService {
@@ -35,23 +34,26 @@ public class UsersService {
         }
     }
 
-    public List getAvailableBrands(LiquorType type) {
-        List brands = new ArrayList();
+    public List<HashMap<String, String>> getUsers() {
+        List<HashMap<String, String>> users = new ArrayList<>();
 
-        if(type.equals(LiquorType.WINE)){
-            brands.add("Adrianna Vineyard");
-            brands.add(("J. P. Chenet"));
-
-        }else if(type.equals(LiquorType.WHISKY)){
-            brands.add("Glenfiddich");
-            brands.add("Johnnie Walker");
-
-        }else if(type.equals(LiquorType.BEER)){
-            brands.add("Corona");
-
-        }else {
-            brands.add("No Brand Available");
+        String sql = "select * from users";
+        try(Connection conn = ds.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()
+        ) {
+            while (rs.next()) {
+                HashMap<String, String> user = new HashMap<>();
+                user.put("id", rs.getString("id"));
+                user.put("first_name", rs.getString("first_name"));
+                user.put("last_name", rs.getString("last_name"));
+                user.put("age", rs.getString("age"));
+                user.put("points", rs.getString("points"));
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return brands;
+        return users;
     }
 }
