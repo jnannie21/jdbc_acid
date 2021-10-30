@@ -43,6 +43,30 @@
             }
         %>
 
+<form action="student" method="post">
+    <table>
+        <thead>
+
+        </thead>
+
+        <tbody>
+        <%
+            for (it = users.iterator(); it.hasNext();)
+            {
+                HashMap<String, String> student = (HashMap<String, String>)it.next();
+        %>
+        <tr>
+            <td><%=student.get("id") %> <input type="hidden" value="<%=student.get("id") %>" name="id"></td>
+            <td><input type="text" value="<%=student.get("first_name") %>" name="first_name"/></td>
+            <td><input type="text" value="<%=student.get("last_name") %>" name="last_name"/></td>
+        </tr>
+        <%} %>
+        </tbody>
+    </table>
+    <button type="submit">Change</button>
+    <button type="submit">Delete</button>
+</form>
+
         <%!
             public String printChangeBtn(String id) {
                 return "<td><form action=\"change_student\" method=\"post\">\n" +
