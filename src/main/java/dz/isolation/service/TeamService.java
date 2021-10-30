@@ -30,7 +30,7 @@ public class TeamService {
             }
             String sql = "CREATE TABLE " +
                     tableName +
-                    " (id INTEGER not NULL, " +
+                    " (id SERIAL not NULL, " +
                     " color VARCHAR(255), " +
                     " points INTEGER, " +
                     " PRIMARY KEY (id))";

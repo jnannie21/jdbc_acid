@@ -33,7 +33,7 @@ public class StudentService {
             }
             String sql = "CREATE TABLE " +
                     tableName +
-                    " (id INTEGER not NULL, " +
+                    " (id SERIAL not NULL, " +
                     " first_name VARCHAR(255), " +
                     " last_name VARCHAR(255), " +
                     " age INTEGER, " +
@@ -85,6 +85,26 @@ public class StudentService {
                 new String[] {"TABLE"}
         );
         return resultSet.next();
+    }
+
+    public void addStudent(Student student) {
+//        INSERT INTO Product (type, model, maker)
+//        VALUES ('PC', 1157, 'B');
+
+        String sql = "insert into student (first_name, last_name, team_id) values (" +
+                "'" + student.getFirstName() + "', " +
+                "'" + student.getLastName() + "', " +
+                1 +
+                ");";
+
+        try (Connection conn = ds.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            stmt.executeUpdate();
+            System.out.println("Record " + student.getId() + " inserted successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteStudent(String id) {

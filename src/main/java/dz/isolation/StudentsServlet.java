@@ -58,6 +58,8 @@ public class StudentsServlet extends HttpServlet {
             changeStudent(req);
         } else if (req.getServletPath().equals("/delete_student")) {
             deleteStudent(req);
+        } else if (req.getServletPath().equals("/add_student")) {
+            addStudent(req);
         }
     }
 
@@ -69,8 +71,13 @@ public class StudentsServlet extends HttpServlet {
         view.forward(req, resp);
     }
 
-    private void createStudent() {
-
+    private void addStudent(HttpServletRequest req) {
+        Student student = new Student(
+                req.getParameter("id"),
+                req.getParameter("first_name"),
+                req.getParameter("last_name")
+        );
+        studentService.addStudent(student);
     }
 
     private void changeStudent(HttpServletRequest req) {

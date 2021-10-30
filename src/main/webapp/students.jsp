@@ -39,6 +39,14 @@
                     </form>
                 </tr>
         <%  } %>
+        <tr>
+            <form action="add_student" method="post">
+                <td>n/a</td>
+                <td><input type="text" value="" name="first_name"/></td>
+                <td><input type="text" value="" name="last_name"/></td>
+                <td><button type="submit">Add new</button></td>
+            </form>
+        </tr>
         </tbody>
     </table>
 </body>
