@@ -1,5 +1,7 @@
 package dz.isolation.service;
 
+import dz.isolation.model.Student;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -52,11 +54,13 @@ public class StudentService {
     public List<HashMap<String, String>> getStudents() {
         List<HashMap<String, String>> students = new ArrayList<>();
 
-        String sql = "select * from " + tableName;
+        String sql = "select * from " + tableName + " order by id";
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery()
+            ResultSet rs = stmt.executeQuery();
         ) {
+//            stmt.setString(1, tableName);
+//            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 HashMap<String, String> student = new HashMap<>();
                 student.put("id", rs.getString("id"));
@@ -90,6 +94,25 @@ public class StudentService {
         ) {
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStudent(Student student) {
+        String sql = "update student set first_name='" +
+                student.getFirstName() +
+                "', last_name='" +
+                student.getLastName() +
+                "' where id=" +
+                student.getId() +
+                ";";
+
+        try (Connection conn = ds.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            stmt.executeUpdate();
+            System.out.println("Record " + student.getId() + " updated successfully");
         } catch (SQLException e) {
             e.printStackTrace();
         }

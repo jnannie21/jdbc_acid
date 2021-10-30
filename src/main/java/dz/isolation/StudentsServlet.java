@@ -1,10 +1,8 @@
 package dz.isolation;
 
-import dz.isolation.model.LiquorType;
+import dz.isolation.model.Student;
 import dz.isolation.service.StudentService;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet(
@@ -45,8 +42,11 @@ public class StudentsServlet extends HttpServlet {
             throws ServletException, IOException {
         System.out.println("req.getParameter()");
         System.out.println(req.getParameter("id"));
+        System.out.println(req.getParameter("first_name"));
+        System.out.println(req.getParameter("last_name"));
         System.out.println("req.getServletPath()");
         System.out.println(req.getServletPath());
+        System.out.println();
 
         routeRequest(req);
 
@@ -55,14 +55,14 @@ public class StudentsServlet extends HttpServlet {
 
     private void routeRequest(HttpServletRequest req) {
         if (req.getServletPath().equals("/change_student")) {
-            changeStudent(req.getParameter("id"));
+            changeStudent(req);
         } else if (req.getServletPath().equals("/delete_student")) {
-            deleteStudent(req.getParameter("id"));
+            deleteStudent(req);
         }
     }
 
     private void generateView(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException{
+            throws ServletException, IOException {
         List students = studentService.getStudents();
         req.setAttribute("students", students);
         RequestDispatcher view = req.getRequestDispatcher("students.jsp");
@@ -73,11 +73,16 @@ public class StudentsServlet extends HttpServlet {
 
     }
 
-    private void changeStudent(String id) {
-
+    private void changeStudent(HttpServletRequest req) {
+        Student student = new Student(
+                req.getParameter("id"),
+                req.getParameter("first_name"),
+                req.getParameter("last_name")
+        );
+        studentService.updateStudent(student);
     }
 
-    private void deleteStudent(String id) {
-        studentService.deleteStudent(id);
+    private void deleteStudent(HttpServletRequest req) {
+        studentService.deleteStudent(req.getParameter("id"));
     }
 }
