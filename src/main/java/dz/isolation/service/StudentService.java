@@ -82,4 +82,16 @@ public class StudentService {
         );
         return resultSet.next();
     }
+
+    public void deleteStudent(String id) {
+        String sql = "delete from student where id=" + id;
+        try(Connection conn = ds.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            stmt.executeUpdate();
+            System.out.println("Record " + id + " deleted successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

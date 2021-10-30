@@ -30,16 +30,35 @@
         <%
             List<HashMap<String, String>> users = (List<HashMap<String, String>>)request.getAttribute("students");
             Iterator<HashMap<String, String>> it = users.iterator();
-            while(it.hasNext()){
+            while(it.hasNext()) {
                 HashMap<String, String> student = it.next();
                 out.println("<tr>");
                 out.println("<td>" + student.get("id") + "</td>");
                 out.println("<td>" + student.get("first_name") + "</td>");
                 out.println("<td>" + student.get("last_name") + "</td>");
                 out.println("<td>" + student.get("age") + "</td>");
-                out.println("<td><button>Change</button></td>");
-                out.println("<td><button>Delete</button></td>");
+                out.println(printChangeBtn(student.get("id")));
+                out.println(printDeleteBtn(student.get("id")));
                 out.println("</tr>");
+            }
+        %>
+
+        <%!
+            public String printChangeBtn(String id) {
+                return "<td><form action=\"change_student\" method=\"post\">\n" +
+                            "<button name=\"change\" value=\"" +
+                            id +
+                            "\">Change</button>\n" +
+                        "</form></td>";
+            }
+
+            public String printDeleteBtn(String id) {
+                return "<td><form action=\"delete_student\" method=\"post\">\n" +
+                        "<button name=\"delete\" value=\"" +
+                        id +
+                        "\">Delete</button>\n" +
+                        "</form></td>";
+//                return "<td><button name=\"foo\" value=\"upvote\">Delete</button></td>";
             }
         %>
 

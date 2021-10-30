@@ -40,17 +40,44 @@ public class StudentsServlet extends HttpServlet {
         view.forward(req, resp);
     }
 
-//    @Override
-//    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-//            throws ServletException, IOException {
-//        String liquorType = req.getParameter("Type");
-//
-//        LiquorType l = LiquorType.valueOf(liquorType);
-//
-//        List users = usersService.getUsers(l);
-//
-//        req.setAttribute("users", users);
-//        RequestDispatcher view = req.getRequestDispatcher("students.jsp");
-//        view.forward(req, resp);
-//    }
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        System.out.println("req.getParameter()");
+        System.out.println(req.getParameter("change"));
+        System.out.println("req.getServletPath()");
+        System.out.println(req.getServletPath());
+
+        routeRequest(req);
+
+        generateView(req, resp);
+    }
+
+    private void routeRequest(HttpServletRequest req) {
+        if (req.getServletPath().equals("/change_student")) {
+            changeStudent(req.getParameter("change"));
+        } else if (req.getServletPath().equals("/delete_student")) {
+            deleteStudent(req.getParameter("delete"));
+        }
+    }
+
+    private void generateView(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException{
+        List students = studentService.getStudents();
+        req.setAttribute("students", students);
+        RequestDispatcher view = req.getRequestDispatcher("students.jsp");
+        view.forward(req, resp);
+    }
+
+    private void createStudent() {
+
+    }
+
+    private void changeStudent(String id) {
+
+    }
+
+    private void deleteStudent(String id) {
+        studentService.deleteStudent(id);
+    }
 }
