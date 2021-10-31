@@ -18,51 +18,20 @@ public class TeamService {
     public TeamService() {
         try {
             ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
-            createTable();
         } catch (NamingException e) {
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
     }
 
-    public void createTable() {
-        try(Connection conn = ds.getConnection();
-            Statement stmt = conn.createStatement();
-        ) {
-            if (tableExists(conn)) {
-                return ;
-            }
-            String sql = "CREATE TABLE " +
-                    tableName +
-                    " (id SERIAL not NULL, " +
-                    " color VARCHAR(255), " +
-                    " points INTEGER, " +
-                    " PRIMARY KEY (id))";
-
-            stmt.executeUpdate(sql);
-            System.out.println("Table " + tableName + " created...");
-            populateTable();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void populateTable() {
-        Team team = new Team(
-                "red",
-                "10"
-        );
-        addTeam(team);
-        team = new Team(
-                "green",
-                "20"
-        );
-        addTeam(team);
-    }
-
     public List<HashMap<String, String>> getTeams() {
         List<HashMap<String, String>> teams = new ArrayList<>();
 
-        String sql = "select * from " + tableName;
+//        String sql = "select * from " + tableName;
+        String sql = "select s.id, s.first_name, s.last_name, s.age, s.points, s.team_id, t.color, t.points as team_points from " +
+                tableName +
+                " as s inner join " +
+                TeamService.tableName +
+                " as t on s.team_id = t.id order by s.id";
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery()
@@ -78,17 +47,6 @@ public class TeamService {
             e.printStackTrace();
         }
         return teams;
-    }
-
-    private boolean tableExists(Connection conn) throws SQLException {
-        DatabaseMetaData meta = conn.getMetaData();
-        ResultSet resultSet = meta.getTables(
-                null,
-                null,
-                tableName,
-                new String[] {"TABLE"}
-        );
-        return resultSet.next();
     }
 
     public void addTeam(Team team) {

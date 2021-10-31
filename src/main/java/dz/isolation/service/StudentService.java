@@ -17,61 +17,15 @@ public class StudentService {
     public StudentService() {
         try {
             ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
-            new TeamService();
-            createTable();
         } catch (NamingException e) {
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
     }
 
-    public void createTable() {
-        try(Connection conn = ds.getConnection();
-            Statement stmt = conn.createStatement();
-        ) {
-            if (tableExists(conn)) {
-                return ;
-            }
-            String sql = "CREATE TABLE " +
-                    tableName +
-                    " (id SERIAL not NULL, " +
-                    " first_name VARCHAR(255), " +
-                    " last_name VARCHAR(255), " +
-                    " age INTEGER, " +
-                    " points INTEGER, " +
-                    " team_id INTEGER not NULL, " +
-                    " PRIMARY KEY (id), " +
-                    " CONSTRAINT fk_team " +
-                    " FOREIGN KEY(team_id) " +
-                    " REFERENCES team(id)) ";
-            stmt.executeUpdate(sql);
-            System.out.println("Table " + tableName + " created...");
-            populateTable();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void populateTable() {
-        Student student = new Student(
-                "user1_first_name",
-                "user1_last_name",
-                "33",
-                "10"
-        );
-        addStudent(student);
-        student = new Student(
-                "user2_first_name",
-                "user2_last_name",
-                "25",
-                "15"
-        );
-        addStudent(student);
-    }
-
     public List<HashMap<String, String>> getStudents() {
         List<HashMap<String, String>> students = new ArrayList<>();
 
-        String sql = "select s.id, s.first_name, s.last_name, s.age, s.points, t.color, t.points as team_points from " +
+        String sql = "select s.id, s.first_name, s.last_name, s.age, s.points, s.team_id, t.color, t.points as team_points from " +
                 tableName +
                 " as s inner join " +
                 TeamService.tableName +
@@ -104,17 +58,6 @@ public class StudentService {
             e.printStackTrace();
         }
         return students;
-    }
-
-    private boolean tableExists(Connection conn) throws SQLException {
-        DatabaseMetaData meta = conn.getMetaData();
-        ResultSet resultSet = meta.getTables(
-                null,
-                null,
-                tableName,
-                new String[] {"TABLE"}
-        );
-        return resultSet.next();
     }
 
     public void addStudent(Student student) {
