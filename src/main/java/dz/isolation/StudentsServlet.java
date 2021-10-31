@@ -73,7 +73,6 @@ public class StudentsServlet extends HttpServlet {
 
     private void addStudent(HttpServletRequest req) {
         Student student = new Student(
-                req.getParameter("id"),
                 req.getParameter("first_name"),
                 req.getParameter("last_name")
         );

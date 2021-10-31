@@ -1,5 +1,8 @@
 package dz.isolation.service;
 
+import dz.isolation.model.Student;
+import dz.isolation.model.Team;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -37,9 +40,23 @@ public class TeamService {
 
             stmt.executeUpdate(sql);
             System.out.println("Table " + tableName + " created...");
+            populateTable();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void populateTable() {
+        Team team = new Team(
+                "red",
+                "10"
+        );
+        addTeam(team);
+        team = new Team(
+                "green",
+                "20"
+        );
+        addTeam(team);
     }
 
     public List<HashMap<String, String>> getTeams() {
@@ -72,5 +89,21 @@ public class TeamService {
                 new String[] {"TABLE"}
         );
         return resultSet.next();
+    }
+
+    public void addTeam(Team team) {
+        String sql = "insert into team (color, points) values (" +
+                "'" + team.getColor() + "', " +
+                "'" + team.getPoints() + "' " +
+                ");";
+
+        try (Connection conn = ds.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            stmt.executeUpdate();
+            System.out.println("Team record inserted successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

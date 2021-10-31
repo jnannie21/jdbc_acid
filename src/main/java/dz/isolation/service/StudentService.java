@@ -43,12 +43,27 @@ public class StudentService {
                     " CONSTRAINT fk_team " +
                     " FOREIGN KEY(team_id) " +
                     " REFERENCES team(id)) ";
-
             stmt.executeUpdate(sql);
             System.out.println("Table " + tableName + " created...");
+            populateTable();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void populateTable() {
+        Student student = new Student(
+                "1",
+                "user1_first_name",
+                "user1_last_name"
+        );
+        addStudent(student);
+        student = new Student(
+                "2",
+                "user2_first_name",
+                "user2_last_name"
+        );
+        addStudent(student);
     }
 
     public List<HashMap<String, String>> getStudents() {
@@ -88,9 +103,6 @@ public class StudentService {
     }
 
     public void addStudent(Student student) {
-//        INSERT INTO Product (type, model, maker)
-//        VALUES ('PC', 1157, 'B');
-
         String sql = "insert into student (first_name, last_name, team_id) values (" +
                 "'" + student.getFirstName() + "', " +
                 "'" + student.getLastName() + "', " +
@@ -101,7 +113,7 @@ public class StudentService {
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             stmt.executeUpdate();
-            System.out.println("Record " + student.getId() + " inserted successfully");
+            System.out.println("Team record inserted successfully");
         } catch (SQLException e) {
             e.printStackTrace();
         }
