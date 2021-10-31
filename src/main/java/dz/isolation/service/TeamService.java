@@ -35,7 +35,7 @@ public class TeamService {
                     tableName +
                     " (id SERIAL not NULL, " +
                     " color VARCHAR(255), " +
-                    " team_points INTEGER, " +
+                    " points INTEGER, " +
                     " PRIMARY KEY (id))";
 
             stmt.executeUpdate(sql);
@@ -60,24 +60,24 @@ public class TeamService {
     }
 
     public List<HashMap<String, String>> getTeams() {
-        List<HashMap<String, String>> commands = new ArrayList<>();
+        List<HashMap<String, String>> teams = new ArrayList<>();
 
-        String sql = "select * from commands";
+        String sql = "select * from " + tableName;
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery()
         ) {
             while (rs.next()) {
-                HashMap<String, String> command = new HashMap<>();
-                command.put("id", rs.getString("id"));
-                command.put("color", rs.getString("color"));
-                command.put("team_points", rs.getString("team_points"));
-                commands.add(command);
+                HashMap<String, String> team = new HashMap<>();
+                team.put("id", rs.getString("id"));
+                team.put("color", rs.getString("color"));
+                team.put("team_points", rs.getString("points"));
+                teams.add(team);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return commands;
+        return teams;
     }
 
     private boolean tableExists(Connection conn) throws SQLException {
@@ -92,7 +92,7 @@ public class TeamService {
     }
 
     public void addTeam(Team team) {
-        String sql = "insert into team (color, team_points) values (" +
+        String sql = "insert into team (color, points) values (" +
                 "'" + team.getColor() + "', " +
                 "'" + team.getPoints() + "' " +
                 ");";

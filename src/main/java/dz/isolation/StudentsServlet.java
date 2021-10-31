@@ -41,13 +41,13 @@ public class StudentsServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        System.out.println("req.getParameter()");
-        System.out.println(req.getParameter("id"));
-        System.out.println(req.getParameter("first_name"));
-        System.out.println(req.getParameter("last_name"));
-        System.out.println("req.getServletPath()");
-        System.out.println(req.getServletPath());
-        System.out.println();
+//        System.out.println("req.getParameter()");
+//        System.out.println(req.getParameter("id"));
+//        System.out.println(req.getParameter("first_name"));
+//        System.out.println(req.getParameter("last_name"));
+//        System.out.println("req.getServletPath()");
+//        System.out.println(req.getServletPath());
+//        System.out.println();
 
         routeRequest(req);
 
@@ -75,18 +75,22 @@ public class StudentsServlet extends HttpServlet {
     private void addStudent(HttpServletRequest req) {
         Student student = new Student(
                 req.getParameter("first_name"),
-                req.getParameter("last_name")
+                req.getParameter("last_name"),
+                req.getParameter("age"),
+                req.getParameter("points")
         );
-        studentService.addStudent(student);
+        studentService.addStudent(student, req.getParameter("team_id"));
     }
 
     private void changeStudent(HttpServletRequest req) {
         Student student = new Student(
                 req.getParameter("id"),
                 req.getParameter("first_name"),
-                req.getParameter("last_name")
+                req.getParameter("last_name"),
+                req.getParameter("age"),
+                req.getParameter("points")
         );
-        studentService.updateStudent(student);
+        studentService.updateStudent(student, req.getParameter("team_id"));
     }
 
     private void deleteStudent(HttpServletRequest req) {

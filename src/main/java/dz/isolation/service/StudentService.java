@@ -53,15 +53,17 @@ public class StudentService {
 
     private void populateTable() {
         Student student = new Student(
-                "1",
                 "user1_first_name",
-                "user1_last_name"
+                "user1_last_name",
+                "33",
+                "10"
         );
         addStudent(student);
         student = new Student(
-                "2",
                 "user2_first_name",
-                "user2_last_name"
+                "user2_last_name",
+                "25",
+                "15"
         );
         addStudent(student);
     }
@@ -69,13 +71,16 @@ public class StudentService {
     public List<HashMap<String, String>> getStudents() {
         List<HashMap<String, String>> students = new ArrayList<>();
 
-        String sql = "select * from " + tableName + " as s inner join " + TeamService.tableName + " as t on s.team_id = t.id order by s.id";
+        String sql = "select s.id, s.first_name, s.last_name, s.age, s.points, t.color, t.points as team_points from " +
+                tableName +
+                " as s inner join " +
+                TeamService.tableName +
+                " as t on s.team_id = t.id order by s.id";
+
         try (Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
-//            ResultSet rs = stmt.executeQuery();
-        ) {
-//            stmt.setString(1, tableName);
             ResultSet rs = stmt.executeQuery();
+        ) {
             while (rs.next()) {
                 HashMap<String, String> student = new HashMap<>();
                 student.put("id", rs.getString("id"));
@@ -85,7 +90,7 @@ public class StudentService {
                 student.put("points", rs.getString("points"));
 
 //                ResultSetMetaData rsmd = rs.getMetaData();
-//                for (int i = 1; i < rsmd.getColumnCount(); i++) {
+//                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 //                    System.out.println(rsmd.getColumnName(i));
 //                    System.out.println(rsmd.getColumnLabel(i));
 //                }
@@ -95,8 +100,6 @@ public class StudentService {
 
                 students.add(student);
             }
-//            stmt.close();
-//            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -115,10 +118,14 @@ public class StudentService {
     }
 
     public void addStudent(Student student) {
+        addStudent(student, "1");
+    }
+
+    public void addStudent(Student student, String teamId) {
         String sql = "insert into student (first_name, last_name, team_id) values (" +
                 "'" + student.getFirstName() + "', " +
                 "'" + student.getLastName() + "', " +
-                1 +
+                teamId +
                 ");";
 
         try (Connection conn = ds.getConnection();
@@ -143,18 +150,19 @@ public class StudentService {
         }
     }
 
-    public void updateStudent(Student student) {
-        String sql = "update student set first_name='" +
-                student.getFirstName() +
-                "', last_name='" +
-                student.getLastName() +
-                "' where id=" +
-                student.getId() +
-                ";";
+//    public void updateStudent(Student student) {
+//        updateStudent(student);
+//    }
+
+    public void updateStudent(Student student, String teamId) {
+        String sql = "update student set first_name=?, last_name=? where id=?";
 
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
+            stmt.setString(1, student.getFirstName());
+            stmt.setString(2, student.getLastName());
+            stmt.setInt(3, Integer.parseInt(student.getId()));
             stmt.executeUpdate();
             System.out.println("Record " + student.getId() + " updated successfully");
         } catch (SQLException e) {
