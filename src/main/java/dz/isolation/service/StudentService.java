@@ -25,11 +25,15 @@ public class StudentService {
     public List<HashMap<String, String>> getStudents() {
         List<HashMap<String, String>> students = new ArrayList<>();
 
-        String sql = "select s.id, s.first_name, s.last_name, s.age, s.points, s.team_id, t.color, t.points as team_points from " +
+//        String sql = "select s.id, s.first_name, s.last_name, s.age, s.points, s.team_id, t.color, t.points as team_points from " +
+//                tableName +
+//                " as s inner join " +
+//                TeamService.tableName +
+//                " as t on s.team_id = t.id order by s.id";
+
+                String sql = "select id, first_name, last_name, age, points, team_id from " +
                 tableName +
-                " as s inner join " +
-                TeamService.tableName +
-                " as t on s.team_id = t.id order by s.id";
+                " order by id";
 
         try (Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -42,6 +46,7 @@ public class StudentService {
                 student.put("last_name", rs.getString("last_name"));
                 student.put("age", rs.getString("age"));
                 student.put("points", rs.getString("points"));
+                student.put("team_id", rs.getString("team_id"));
 
 //                ResultSetMetaData rsmd = rs.getMetaData();
 //                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
@@ -49,8 +54,8 @@ public class StudentService {
 //                    System.out.println(rsmd.getColumnLabel(i));
 //                }
 
-                student.put("team_color", rs.getString("color"));
-                student.put("team_points", rs.getString("team_points"));
+//                student.put("team_color", rs.getString("color"));
+//                student.put("team_points", rs.getString("team_points"));
 
                 students.add(student);
             }
@@ -60,22 +65,24 @@ public class StudentService {
         return students;
     }
 
-    public void addStudent(Student student) {
-        addStudent(student, "1");
-    }
+//    public void addStudent(Student student) {
+//        addStudent(student, "1");
+//    }
 
-    public void addStudent(Student student, String teamId) {
-        String sql = "insert into student (first_name, last_name, team_id) values (" +
+    public void addStudent(Student student) {
+        String sql = "insert into student (first_name, last_name, age, points, team_id) values (" +
                 "'" + student.getFirstName() + "', " +
                 "'" + student.getLastName() + "', " +
-                teamId +
+                "'" + student.getAge() + "', " +
+                "'" + student.getPoints() + "', " +
+                "'" + student.getTeamId() + "'" +
                 ");";
 
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             stmt.executeUpdate();
-            System.out.println("Team record inserted successfully");
+            System.out.println("Student record inserted successfully");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -93,19 +100,19 @@ public class StudentService {
         }
     }
 
-//    public void updateStudent(Student student) {
-//        updateStudent(student);
-//    }
-
-    public void updateStudent(Student student, String teamId) {
-        String sql = "update student set first_name=?, last_name=? where id=?";
+    public void updateStudent(Student student) {
+        String sql = "update student set first_name=?, last_name=?, age=?, points=?, team_id=? where id=?";
 
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             stmt.setString(1, student.getFirstName());
             stmt.setString(2, student.getLastName());
-            stmt.setInt(3, Integer.parseInt(student.getId()));
+            stmt.setInt(3, Integer.parseInt(student.getAge()));
+            stmt.setInt(4, Integer.parseInt(student.getPoints()));
+            stmt.setInt(5, Integer.parseInt(student.getTeamId()));
+            stmt.setInt(6, Integer.parseInt(student.getId()));
+
             stmt.executeUpdate();
             System.out.println("Record " + student.getId() + " updated successfully");
         } catch (SQLException e) {

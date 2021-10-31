@@ -31,31 +31,20 @@ public class StudentsServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        createTables();
         studentService = new StudentService();
         teamService = new TeamService();
+        createTables();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List students = studentService.getStudents();
-
-        req.setAttribute("students", students);
-        RequestDispatcher view = req.getRequestDispatcher("students.jsp");
-        view.forward(req, resp);
+        generateView(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-//        System.out.println("req.getParameter()");
-//        System.out.println(req.getParameter("id"));
-//        System.out.println(req.getParameter("first_name"));
-//        System.out.println(req.getParameter("last_name"));
-//        System.out.println("req.getServletPath()");
-//        System.out.println(req.getServletPath());
-//        System.out.println();
 
         routeRequest(req);
 
@@ -69,17 +58,27 @@ public class StudentsServlet extends HttpServlet {
             deleteStudent(req);
         } else if (req.getServletPath().equals("/add_student")) {
             addStudent(req);
+        } else if (req.getServletPath().equals("/change_team")) {
+            changeTeam(req);
+        } else if (req.getServletPath().equals("/delete_team")) {
+            deleteTeam(req);
+        } else if (req.getServletPath().equals("/add_team")) {
+            addTeam(req);
         }
     }
 
     private void generateView(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        setReqAttributes(req);
+        RequestDispatcher view = req.getRequestDispatcher("students.jsp");
+        view.forward(req, resp);
+    }
+
+    private void setReqAttributes(HttpServletRequest req) {
         List<HashMap<String, String>> students = studentService.getStudents();
         req.setAttribute("students", students);
         List<HashMap<String, String>> teams = teamService.getTeams();
         req.setAttribute("teams", teams);
-        RequestDispatcher view = req.getRequestDispatcher("students.jsp");
-        view.forward(req, resp);
     }
 
     private void addStudent(HttpServletRequest req) {
@@ -87,9 +86,10 @@ public class StudentsServlet extends HttpServlet {
                 req.getParameter("first_name"),
                 req.getParameter("last_name"),
                 req.getParameter("age"),
-                req.getParameter("points")
+                req.getParameter("points"),
+                req.getParameter("team_id")
         );
-        studentService.addStudent(student, req.getParameter("team_id"));
+        studentService.addStudent(student);
     }
 
     private void changeStudent(HttpServletRequest req) {
@@ -98,13 +98,38 @@ public class StudentsServlet extends HttpServlet {
                 req.getParameter("first_name"),
                 req.getParameter("last_name"),
                 req.getParameter("age"),
-                req.getParameter("points")
+                req.getParameter("points"),
+                req.getParameter("team_id")
         );
-        studentService.updateStudent(student, req.getParameter("team_id"));
+        studentService.updateStudent(student);
     }
 
     private void deleteStudent(HttpServletRequest req) {
         studentService.deleteStudent(req.getParameter("id"));
+    }
+
+    private void addTeam(HttpServletRequest req) {
+        Team team = new Team(
+                req.getParameter("color"),
+                req.getParameter("points")
+        );
+        teamService.addTeam(team);
+    }
+
+    private void changeTeam(HttpServletRequest req) {
+
+//        System.out.println(req.getParameter("id") + req.getParameter("color") + req.getParameter("points"));
+
+        Team team = new Team(
+                req.getParameter("id"),
+                req.getParameter("color"),
+                req.getParameter("points")
+        );
+        teamService.updateTeam(team);
+    }
+
+    private void deleteTeam(HttpServletRequest req) {
+        teamService.deleteTeam(req.getParameter("id"));
     }
 
     private void createTables() throws ServletException {
@@ -121,7 +146,7 @@ public class StudentsServlet extends HttpServlet {
         try(Connection conn = ds.getConnection();
             Statement stmt = conn.createStatement();
         ) {
-            if (tableStudentExists(conn)) {
+            if (tableExists(conn, "student")) {
                 return ;
             }
             String sql = "CREATE TABLE student" +
@@ -143,39 +168,30 @@ public class StudentsServlet extends HttpServlet {
         }
     }
 
-    private boolean tableStudentExists(Connection conn) throws SQLException {
-        DatabaseMetaData meta = conn.getMetaData();
-        ResultSet resultSet = meta.getTables(
-                null,
-                null,
-                "student",
-                new String[] {"TABLE"}
-        );
-        return resultSet.next();
-    }
-
     private void populateStudentTable() {
         Student student = new Student(
                 "user1_first_name",
                 "user1_last_name",
                 "33",
-                "10"
+                "10",
+                "1"
         );
         studentService.addStudent(student);
         student = new Student(
                 "user2_first_name",
                 "user2_last_name",
                 "25",
-                "15"
+                "15",
+                "1"
         );
         studentService.addStudent(student);
     }
 
     private void createTeamTable(DataSource ds) {
-        try(Connection conn = ds.getConnection();
+        try (Connection conn = ds.getConnection();
             Statement stmt = conn.createStatement();
         ) {
-            if (tableTeamExists(conn)) {
+            if (tableExists(conn, "team")) {
                 return ;
             }
             String sql = "CREATE TABLE team" +
@@ -205,14 +221,15 @@ public class StudentsServlet extends HttpServlet {
         teamService.addTeam(team);
     }
 
-    private boolean tableTeamExists(Connection conn) throws SQLException {
+    private boolean tableExists(Connection conn, String tableName) throws SQLException {
         DatabaseMetaData meta = conn.getMetaData();
         ResultSet resultSet = meta.getTables(
                 null,
                 null,
-                "team",
+                tableName,
                 new String[] {"TABLE"}
         );
         return resultSet.next();
     }
+
 }

@@ -26,13 +26,10 @@ public class TeamService {
     public List<HashMap<String, String>> getTeams() {
         List<HashMap<String, String>> teams = new ArrayList<>();
 
-//        String sql = "select * from " + tableName;
-        String sql = "select s.id, s.first_name, s.last_name, s.age, s.points, s.team_id, t.color, t.points as team_points from " +
+        String sql = "select id, color, points from " +
                 tableName +
-                " as s inner join " +
-                TeamService.tableName +
-                " as t on s.team_id = t.id order by s.id";
-        try(Connection conn = ds.getConnection();
+                " order by id";
+        try (Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery()
         ) {
@@ -40,7 +37,7 @@ public class TeamService {
                 HashMap<String, String> team = new HashMap<>();
                 team.put("id", rs.getString("id"));
                 team.put("color", rs.getString("color"));
-                team.put("team_points", rs.getString("points"));
+                team.put("points", rs.getString("points"));
                 teams.add(team);
             }
         } catch (SQLException e) {
@@ -60,6 +57,34 @@ public class TeamService {
         ) {
             stmt.executeUpdate();
             System.out.println("Team record inserted successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteTeam(String id) {
+        String sql = "delete from team where id=" + id;
+        try(Connection conn = ds.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            stmt.executeUpdate();
+            System.out.println("Record " + id + " deleted successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateTeam(Team team) {
+        String sql = "update team set color=?, points=? where id=?";
+
+        try (Connection conn = ds.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            stmt.setString(1, team.getColor());
+            stmt.setInt(2, Integer.parseInt(team.getPoints()));
+            stmt.setInt(3, Integer.parseInt(team.getId()));
+            stmt.executeUpdate();
+            System.out.println("Record " + team.getId() + " updated successfully");
         } catch (SQLException e) {
             e.printStackTrace();
         }
