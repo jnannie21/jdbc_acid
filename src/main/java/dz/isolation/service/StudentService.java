@@ -12,7 +12,7 @@ import java.util.List;
 
 public class StudentService {
     DataSource ds;
-    private static final String tableName = "student";
+    public static final String tableName = "student";
 
     public StudentService() {
         try {
@@ -69,13 +69,13 @@ public class StudentService {
     public List<HashMap<String, String>> getStudents() {
         List<HashMap<String, String>> students = new ArrayList<>();
 
-        String sql = "select * from " + tableName + " order by id";
-        try(Connection conn = ds.getConnection();
+        String sql = "select * from " + tableName + " as s inner join " + TeamService.tableName + " as t on s.team_id = t.id order by s.id";
+        try (Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+//            ResultSet rs = stmt.executeQuery();
         ) {
 //            stmt.setString(1, tableName);
-//            ResultSet rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 HashMap<String, String> student = new HashMap<>();
                 student.put("id", rs.getString("id"));
@@ -83,8 +83,20 @@ public class StudentService {
                 student.put("last_name", rs.getString("last_name"));
                 student.put("age", rs.getString("age"));
                 student.put("points", rs.getString("points"));
+
+//                ResultSetMetaData rsmd = rs.getMetaData();
+//                for (int i = 1; i < rsmd.getColumnCount(); i++) {
+//                    System.out.println(rsmd.getColumnName(i));
+//                    System.out.println(rsmd.getColumnLabel(i));
+//                }
+
+                student.put("team_color", rs.getString("color"));
+                student.put("team_points", rs.getString("team_points"));
+
                 students.add(student);
             }
+//            stmt.close();
+//            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

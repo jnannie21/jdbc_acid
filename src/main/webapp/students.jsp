@@ -14,7 +14,10 @@
                 <th>#</th>
                 <th>First Name</th>
                 <th>Last Name</th>
-                <th>Username</th>
+                <th>Age</th>
+                <th>Points</th>
+                <th>Team_color</th>
+                <th>Team_points</th>
             </tr>
         </thead>
 
@@ -30,6 +33,10 @@
                         <td><%=student.get("id") %> <input type="hidden" value="<%=student.get("id") %>" name="id"></td>
                         <td><input type="text" value="<%=student.get("first_name") %>" name="first_name"/></td>
                         <td><input type="text" value="<%=student.get("last_name") %>" name="last_name"/></td>
+                        <td><input type="text" value="<%=student.get("age") %>" name="age"/></td>
+                        <td><input type="text" value="<%=student.get("points") %>" name="points"/></td>
+                        <td><input type="text" value="<%=student.get("team_color") %>" name="team_color"/></td>
+                        <td><input type="text" value="<%=student.get("team_points") %>" name="team_points"/></td>
                         <td><button type="submit">Change</button></td>
                     </form>
 

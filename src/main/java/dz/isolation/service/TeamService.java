@@ -13,7 +13,7 @@ import java.util.List;
 
 public class TeamService {
     DataSource ds;
-    private static final String tableName = "team";
+    public static final String tableName = "team";
 
     public TeamService() {
         try {
@@ -35,7 +35,7 @@ public class TeamService {
                     tableName +
                     " (id SERIAL not NULL, " +
                     " color VARCHAR(255), " +
-                    " points INTEGER, " +
+                    " team_points INTEGER, " +
                     " PRIMARY KEY (id))";
 
             stmt.executeUpdate(sql);
@@ -70,8 +70,8 @@ public class TeamService {
             while (rs.next()) {
                 HashMap<String, String> command = new HashMap<>();
                 command.put("id", rs.getString("id"));
-                command.put("color", rs.getString("first_name"));
-                command.put("points", rs.getString("age"));
+                command.put("color", rs.getString("color"));
+                command.put("team_points", rs.getString("team_points"));
                 commands.add(command);
             }
         } catch (SQLException e) {
@@ -92,7 +92,7 @@ public class TeamService {
     }
 
     public void addTeam(Team team) {
-        String sql = "insert into team (color, points) values (" +
+        String sql = "insert into team (color, team_points) values (" +
                 "'" + team.getColor() + "', " +
                 "'" + team.getPoints() + "' " +
                 ");";

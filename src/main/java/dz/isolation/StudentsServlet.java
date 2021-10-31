@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 @WebServlet(
@@ -65,7 +66,7 @@ public class StudentsServlet extends HttpServlet {
 
     private void generateView(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List students = studentService.getStudents();
+        List<HashMap<String, String>> students = studentService.getStudents();
         req.setAttribute("students", students);
         RequestDispatcher view = req.getRequestDispatcher("students.jsp");
         view.forward(req, resp);
