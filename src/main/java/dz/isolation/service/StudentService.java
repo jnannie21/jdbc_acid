@@ -4,7 +4,10 @@ import dz.isolation.model.Student;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +16,7 @@ import java.util.List;
 public class StudentService {
     DataSource ds;
     public static final String tableName = "student";
+    private String errorMsg;
 
     public StudentService() {
         try {
@@ -77,13 +81,13 @@ public class StudentService {
                 "'" + student.getPoints() + "', " +
                 "'" + student.getTeamId() + "'" +
                 ");";
-
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             stmt.executeUpdate();
             System.out.println("Student record inserted successfully");
         } catch (SQLException e) {
+            errorMsg = e.getMessage();
             e.printStackTrace();
         }
     }
@@ -96,6 +100,7 @@ public class StudentService {
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
         } catch (SQLException e) {
+            errorMsg = e.getMessage();
             e.printStackTrace();
         }
     }
@@ -116,7 +121,16 @@ public class StudentService {
             stmt.executeUpdate();
             System.out.println("Record " + student.getId() + " updated successfully");
         } catch (SQLException e) {
+            errorMsg = e.getMessage();
             e.printStackTrace();
         }
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void resetError() {
+        errorMsg = null;
     }
 }

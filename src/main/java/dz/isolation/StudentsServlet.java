@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,6 @@ import java.util.List;
 public class StudentsServlet extends HttpServlet {
     private StudentService studentService;
     private TeamService teamService;
-//    private DataSource ds;
 
     @Override
     public void init() throws ServletException {
@@ -39,12 +39,17 @@ public class StudentsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
+        resetErrors();
+
         generateView(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
+        resetErrors();
 
         routeRequest(req);
 
@@ -79,6 +84,8 @@ public class StudentsServlet extends HttpServlet {
         req.setAttribute("students", students);
         List<HashMap<String, String>> teams = teamService.getTeams();
         req.setAttribute("teams", teams);
+        req.setAttribute("studentService", studentService);
+        req.setAttribute("teamService", teamService);
     }
 
     private void addStudent(HttpServletRequest req) {
@@ -117,9 +124,6 @@ public class StudentsServlet extends HttpServlet {
     }
 
     private void changeTeam(HttpServletRequest req) {
-
-//        System.out.println(req.getParameter("id") + req.getParameter("color") + req.getParameter("points"));
-
         Team team = new Team(
                 req.getParameter("id"),
                 req.getParameter("color"),
@@ -230,6 +234,11 @@ public class StudentsServlet extends HttpServlet {
                 new String[] {"TABLE"}
         );
         return resultSet.next();
+    }
+
+    private void resetErrors() {
+        studentService.resetError();
+        teamService.resetError();
     }
 
 }

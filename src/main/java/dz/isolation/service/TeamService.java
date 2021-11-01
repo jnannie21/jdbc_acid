@@ -14,6 +14,7 @@ import java.util.List;
 public class TeamService {
     DataSource ds;
     public static final String tableName = "team";
+    private String errorMsg;
 
     public TeamService() {
         try {
@@ -58,6 +59,7 @@ public class TeamService {
             stmt.executeUpdate();
             System.out.println("Team record inserted successfully");
         } catch (SQLException e) {
+            errorMsg = e.getMessage();
             e.printStackTrace();
         }
     }
@@ -70,6 +72,7 @@ public class TeamService {
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
         } catch (SQLException e) {
+            errorMsg = e.getMessage();
             e.printStackTrace();
         }
     }
@@ -86,7 +89,16 @@ public class TeamService {
             stmt.executeUpdate();
             System.out.println("Record " + team.getId() + " updated successfully");
         } catch (SQLException e) {
+            errorMsg = e.getMessage();
             e.printStackTrace();
         }
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void resetError() {
+        errorMsg = null;
     }
 }

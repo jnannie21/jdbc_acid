@@ -1,10 +1,27 @@
 <%@ page import="java.util.*" %>
+<%@ page import="dz.isolation.service.StudentService" %>
+<%@ page import="dz.isolation.service.TeamService" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>Students and teams table</title>
 </head>
 <body>
+    <div style="font-size: larger; color: brown">
+            <%
+                StudentService studentService = (StudentService) request.getAttribute("studentService");
+                TeamService teamService = (TeamService) request.getAttribute("teamService");
+                String studentServiceError = studentService.getErrorMsg();
+                String teamServiceError = teamService.getErrorMsg();
+
+                if (studentServiceError != null) {
+                    out.print(studentServiceError);
+                }
+                if (teamServiceError != null) {
+                    out.print(teamServiceError);
+                }
+            %>
+    </div>
     <h1>
         Available students
     </h1>
