@@ -28,7 +28,7 @@
     <table style="font-size: larger">
         <thead>
             <tr>
-                <th>#</th>
+                <th>id</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Age</th>
@@ -82,7 +82,7 @@
     <table style="font-size: larger">
         <thead>
         <tr>
-            <th>#</th>
+            <th>id</th>
             <th>Color</th>
             <th>Points</th>
         </tr>
@@ -96,11 +96,11 @@
                 HashMap<String, String> team = it.next();
         %>
         <tr>
-            <form action="change_team" method="post">
+            <form action="change_team" method="post" name="change_team<%=team.get("id") %>">
                 <td><%=team.get("id") %> <input type="hidden" value="<%=team.get("id") %>" name="id"></td>
                 <td><input type="text" value="<%=team.get("color") %>" name="color"/></td>
                 <td><input type="text" value="<%=team.get("points") %>" name="points"/></td>
-                <td><button type="submit">Change</button></td>
+                <td><button type="submit" name="submit_change_team">Change</button></td>
             </form>
 
             <form action="delete_team" method="post">

@@ -30,7 +30,6 @@ public class StudentsServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        super.init();
         studentService = new StudentService();
         teamService = new TeamService();
         createTables();
