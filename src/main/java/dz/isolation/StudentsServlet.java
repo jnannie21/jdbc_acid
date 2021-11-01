@@ -154,11 +154,14 @@ public class StudentsServlet extends HttpServlet {
                 return ;
             }
             String sql = "CREATE TABLE student" +
-                    " (id SERIAL not NULL, " +
-                    " first_name VARCHAR(255), " +
-                    " last_name VARCHAR(255), " +
-                    " age INTEGER, " +
-                    " points INTEGER, " +
+                    " (id SERIAL NOT NULL, " +
+                    " first_name VARCHAR(255) NOT NULL, " +
+                    " CHECK (first_name <> ''), " +
+                    " last_name VARCHAR(255) NOT NULL, " +
+                    " CHECK (last_name <> ''), " +
+                    " age INTEGER NOT NULL, " +
+                    " CHECK (age <> 0), " +
+                    " points INTEGER NOT NULL, " +
                     " team_id INTEGER not NULL, " +
                     " PRIMARY KEY (id), " +
                     " CONSTRAINT fk_team " +
@@ -200,8 +203,9 @@ public class StudentsServlet extends HttpServlet {
             }
             String sql = "CREATE TABLE team" +
                     " (id SERIAL not NULL, " +
-                    " color VARCHAR(255), " +
-                    " points INTEGER, " +
+                    " color VARCHAR(255) NOT NULL UNIQUE, " +
+                    " CHECK (color <> ''), " +
+                    " points INTEGER NOT NULL, " +
                     " PRIMARY KEY (id))";
 
             stmt.executeUpdate(sql);

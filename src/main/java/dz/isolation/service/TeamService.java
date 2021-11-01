@@ -53,9 +53,14 @@ public class TeamService {
                 "'" + team.getPoints() + "' " +
                 ");";
 
+//        String sql = "insert into team (color, points) values (?, ?)";
+
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
+//            stmt.setString(1, team.getColor());
+//            String points = team.getPoints();
+//            stmt.setInt(2, points.length() > 0 ? Integer.parseInt(points) : 0);
             stmt.executeUpdate();
             System.out.println("Team record inserted successfully");
         } catch (SQLException e) {
@@ -78,14 +83,24 @@ public class TeamService {
     }
 
     public void updateTeam(Team team) {
-        String sql = "update team set color=?, points=? where id=?";
+        String sql = "update team set " +
+                "color=" +
+                "'" + team.getColor() + "', " +
+                "points=" +
+                "'" + team.getPoints() + "' " +
+                " where id=" +
+                "'" + team.getId() + "'";
+
+//        String sql = "update team set color=?, points=? where id=?";
 
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-            stmt.setString(1, team.getColor());
-            stmt.setInt(2, Integer.parseInt(team.getPoints()));
-            stmt.setInt(3, Integer.parseInt(team.getId()));
+//            stmt.setString(1, team.getColor());
+//            Integer points = team.getPoints().length() > 0 ? Integer.decode(team.getPoints()) : null;
+//            stmt.setObject(2, points);
+//            Integer id = team.getId().length() > 0 ? Integer.decode(team.getId()) : null;
+//            stmt.setObject(3, id);
             stmt.executeUpdate();
             System.out.println("Record " + team.getId() + " updated successfully");
         } catch (SQLException e) {

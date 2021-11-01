@@ -69,10 +69,6 @@ public class StudentService {
         return students;
     }
 
-//    public void addStudent(Student student) {
-//        addStudent(student, "1");
-//    }
-
     public void addStudent(Student student) {
         String sql = "insert into student (first_name, last_name, age, points, team_id) values (" +
                 "'" + student.getFirstName() + "', " +
@@ -81,9 +77,12 @@ public class StudentService {
                 "'" + student.getPoints() + "', " +
                 "'" + student.getTeamId() + "'" +
                 ");";
+//        String sql = "insert into student (first_name, last_name, age, points, team_id) values (?, ?, ?, ?, ?)";
+
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
+//            setValuesInStatement(stmt, student);
             stmt.executeUpdate();
             System.out.println("Student record inserted successfully");
         } catch (SQLException e) {
@@ -106,17 +105,27 @@ public class StudentService {
     }
 
     public void updateStudent(Student student) {
-        String sql = "update student set first_name=?, last_name=?, age=?, points=?, team_id=? where id=?";
+        String sql = "update student set " +
+                "first_name=" +
+                "'" + student.getFirstName() + "', " +
+                "last_name=" +
+                "'" + student.getLastName() + "', " +
+                "age=" +
+                "'" + student.getAge() + "', " +
+                "points=" +
+                "'" + student.getPoints() + "', " +
+                "team_id=" +
+                "'" + student.getTeamId() + "'" +
+                " where id=" +
+                "'" + student.getId() + "'";
+
+//        String sql = "update student set first_name=?, last_name=?, age=?, points=?, team_id=? where id=?";
 
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-            stmt.setString(1, student.getFirstName());
-            stmt.setString(2, student.getLastName());
-            stmt.setInt(3, Integer.parseInt(student.getAge()));
-            stmt.setInt(4, Integer.parseInt(student.getPoints()));
-            stmt.setInt(5, Integer.parseInt(student.getTeamId()));
-            stmt.setInt(6, Integer.parseInt(student.getId()));
+//            setValuesInStatement(stmt, student);
+//            stmt.setInt(6, Integer.decode(student.getId()));
 
             stmt.executeUpdate();
             System.out.println("Record " + student.getId() + " updated successfully");
@@ -125,6 +134,14 @@ public class StudentService {
             e.printStackTrace();
         }
     }
+
+//    private void setValuesInStatement(PreparedStatement stmt, Student student) throws SQLException {
+//        stmt.setString(1, student.getFirstName());
+//        stmt.setString(2, student.getLastName());
+//        stmt.setInt(3, Integer.decode(student.getAge()));
+//        stmt.setInt(4, Integer.decode(student.getPoints()));
+//        stmt.setInt(5, Integer.decode(student.getTeamId()));
+//    }
 
     public String getErrorMsg() {
         return errorMsg;
