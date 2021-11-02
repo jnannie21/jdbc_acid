@@ -64,6 +64,7 @@ public class StudentService {
                 students.add(student);
             }
         } catch (SQLException e) {
+            setErrorMsg(e.getMessage());
             e.printStackTrace();
         }
         return students;
@@ -145,6 +146,10 @@ public class StudentService {
 
     public String getErrorMsg() {
         return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
     }
 
     public void resetError() {

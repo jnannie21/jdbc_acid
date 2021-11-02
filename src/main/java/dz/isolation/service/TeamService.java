@@ -42,6 +42,7 @@ public class TeamService {
                 teams.add(team);
             }
         } catch (SQLException e) {
+            setErrorMsg(e.getMessage());
             e.printStackTrace();
         }
         return teams;
@@ -111,6 +112,10 @@ public class TeamService {
 
     public String getErrorMsg() {
         return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
     }
 
     public void resetError() {
