@@ -58,6 +58,25 @@ class IntegrationTests {
 //    }
 
     @Test
+    public void dataBaseInitialState_AddingStudentRecords_Success() {
+        StudentService studentService = new StudentService(ds);
+
+        Student newStudent = new Student(
+                "Andrei",
+                "Andreev",
+                "17",
+                "0",
+                "2"
+        );
+        studentService.insert(newStudent);
+
+        List<Student> students = studentService.getAll();
+        Assertions.assertEquals(3, students.size());
+        Assertions.assertEquals("Andrei", students.get(2).getFirstName());
+        Assertions.assertEquals("0", students.get(2).getPoints());
+    }
+
+    @Test
     public void dataBaseInitialState_GettingStudentRecords_Success() {
         StudentService studentService = new StudentService(ds);
 
@@ -100,25 +119,6 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_AddingRecords_Success() {
-        StudentService studentService = new StudentService(ds);
-
-        Student newStudent = new Student(
-                "Andrei",
-                "Andreev",
-                "17",
-                "0",
-                "2"
-        );
-        studentService.insert(newStudent);
-
-        List<Student> students = studentService.getAll();
-        Assertions.assertEquals(3, students.size());
-        Assertions.assertEquals("Andrei", students.get(2).getFirstName());
-        Assertions.assertEquals("0", students.get(2).getPoints());
-    }
-
-    @Test
     public void dataBaseInitialState_ViolateAgeConstraint_Failure() {
         StudentService studentService = new StudentService(ds);
 
@@ -155,7 +155,7 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_ViolateFirstNameNullConstraint_Failure() {
+    public void dataBaseInitialState_ViolateFirstNameNotNullConstraint_Failure() {
         StudentService studentService = new StudentService(ds);
 
         Student newStudent = new Student(
@@ -170,6 +170,148 @@ class IntegrationTests {
 
         List<Student> students = studentService.getAll();
         Assertions.assertEquals(2, students.size());
+    }
+
+    @Test
+    public void dataBaseInitialState_ViolateFirstNameNotEmptyConstraint_Failure() {
+        StudentService studentService = new StudentService(ds);
+
+        Student newStudent = new Student(
+                "",
+                "Andreev",
+                "17",
+                "0",
+                "2"
+        );
+
+        studentService.insert(newStudent);
+
+        List<Student> students = studentService.getAll();
+        Assertions.assertEquals(2, students.size());
+    }
+
+    @Test
+    public void dataBaseInitialState_ViolateLastNameNotNullConstraint_Failure() {
+        StudentService studentService = new StudentService(ds);
+
+        Student newStudent = new Student(
+                "first_name",
+                null,
+                "17",
+                "0",
+                "2"
+        );
+
+        studentService.insert(newStudent);
+
+        List<Student> students = studentService.getAll();
+        Assertions.assertEquals(2, students.size());
+    }
+
+    @Test
+    public void dataBaseInitialState_ViolateLastNameNotEmptyConstraint_Failure() {
+        StudentService studentService = new StudentService(ds);
+
+        Student newStudent = new Student(
+                "first_name",
+                "",
+                "17",
+                "0",
+                "2"
+        );
+
+        studentService.insert(newStudent);
+
+        List<Student> students = studentService.getAll();
+        Assertions.assertEquals(2, students.size());
+    }
+
+    @Test
+    public void dataBaseInitialState_ViolateAgeNotNullConstraint_Failure() {
+        StudentService studentService = new StudentService(ds);
+
+        Student newStudent = new Student(
+                "first_name",
+                "last_name",
+                null,
+                "0",
+                "2"
+        );
+
+        studentService.insert(newStudent);
+
+        List<Student> students = studentService.getAll();
+        Assertions.assertEquals(2, students.size());
+    }
+
+    @Test
+    public void dataBaseInitialState_ViolateAgeBiggerThanZeroConstraint_Failure() {
+        StudentService studentService = new StudentService(ds);
+
+        Student newStudent = new Student(
+                "first_name",
+                "last_name",
+                "0",
+                "0",
+                "2"
+        );
+
+        studentService.insert(newStudent);
+
+        List<Student> students = studentService.getAll();
+        Assertions.assertEquals(2, students.size());
+    }
+
+    @Test
+    public void dataBaseInitialState_ViolatePointsNotNullConstraint_Failure() {
+        StudentService studentService = new StudentService(ds);
+
+        Student newStudent = new Student(
+                "first_name",
+                "last_name",
+                "123",
+                null,
+                "2"
+        );
+
+        studentService.insert(newStudent);
+
+        List<Student> students = studentService.getAll();
+        Assertions.assertEquals(2, students.size());
+    }
+
+    @Test
+    public void dataBaseInitialState_ViolateTeamIdNotNullConstraint_Failure() {
+        StudentService studentService = new StudentService(ds);
+
+        Student newStudent = new Student(
+                "first_name",
+                "last_name",
+                "123",
+                "0",
+                null
+        );
+
+        studentService.insert(newStudent);
+
+        List<Student> students = studentService.getAll();
+        Assertions.assertEquals(2, students.size());
+    }
+
+    @Test
+    public void dataBaseInitialState_AddingTeamRecords_Success() {
+        TeamService teamService = new TeamService(ds);
+
+        Team newStudent = new Team(
+                "black",
+                "-123"
+        );
+        teamService.insert(newStudent);
+
+        List<Team> teams = teamService.getAll();
+        Assertions.assertEquals(3, teams.size());
+        Assertions.assertEquals("black", teams.get(2).getColor());
+        Assertions.assertEquals("-123", teams.get(2).getPoints());
     }
 
     @Test
@@ -210,10 +352,6 @@ class IntegrationTests {
         Assertions.assertEquals("red", teams.get(0).getColor());
         Assertions.assertEquals("15", teams.get(0).getPoints());
     }
-
-
-
-
 
 
 //    @Test

@@ -47,7 +47,7 @@ public class StudentService {
                     " age INTEGER NOT NULL, " +
                     " CHECK (age > 0), " +
                     " points INTEGER NOT NULL, " +
-                    " team_id INTEGER not NULL, " +
+                    " team_id INTEGER NOT NULL, " +
                     " PRIMARY KEY (id), " +
                     " CONSTRAINT fk_team " +
                     " FOREIGN KEY(team_id) " +
