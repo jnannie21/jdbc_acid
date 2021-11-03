@@ -136,26 +136,24 @@ public class StudentService {
     }
 
     public void addStudent(Student student) {
-        String sql = "insert into student (first_name, last_name, age, points, team_id) values (" +
-                "'" + student.getFirstName() + "', " +
-                "'" + student.getLastName() + "', " +
-                "'" + student.getAge() + "', " +
-                "'" + student.getPoints() + "', " +
-                "'" + student.getTeamId() + "'" +
-                ");";
-//        String sql = "insert into student (first_name, last_name, age, points, team_id) values (?, ?, ?, ?, ?)";
+//        String sql = "insert into student (first_name, last_name, age, points, team_id) values (" +
+//                "'" + student.getFirstName() + "', " +
+//                "'" + student.getLastName() + "', " +
+//                "'" + student.getAge() + "', " +
+//                "'" + student.getPoints() + "', " +
+//                "'" + student.getTeamId() + "'" +
+//                ");";
+        String sql = "insert into student (first_name, last_name, age, points, team_id) values (?, ?, ?, ?, ?)";
 
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-//            setValuesInStatement(stmt, student);
-
-            System.out.println(sql);
+            setValuesInStatement(stmt, student);
 
             stmt.executeUpdate();
             System.out.println("Student record inserted successfully");
-        } catch (SQLException e) {
-            errorMsg = e.getMessage();
+        } catch (NumberFormatException | SQLException e) {
+            errorMsg = e.toString();
             e.printStackTrace();
         }
     }
@@ -168,49 +166,50 @@ public class StudentService {
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
         } catch (SQLException e) {
-            errorMsg = e.getMessage();
+            errorMsg = e.toString();
             e.printStackTrace();
         }
     }
 
     public void updateStudent(Student student) {
-        String sql = "update student set " +
-                "first_name=" +
-                "'" + student.getFirstName() + "', " +
-                "last_name=" +
-                "'" + student.getLastName() + "', " +
-                "age=" +
-                "'" + student.getAge() + "', " +
-                "points=" +
-                "'" + student.getPoints() + "', " +
-                "team_id=" +
-                "'" + student.getTeamId() + "'" +
-                " where id=" +
-                "'" + student.getId() + "'";
+//        String sql = "update student set " +
+//                "first_name=" +
+//                "'" + student.getFirstName() + "', " +
+//                "last_name=" +
+//                "'" + student.getLastName() + "', " +
+//                "age=" +
+//                "'" + student.getAge() + "', " +
+//                "points=" +
+//                "'" + student.getPoints() + "', " +
+//                "team_id=" +
+//                "'" + student.getTeamId() + "'" +
+//                " where id=" +
+//                "'" + student.getId() + "'";
 
-//        String sql = "update student set first_name=?, last_name=?, age=?, points=?, team_id=? where id=?";
+        String sql = "update student set first_name=?, last_name=?, age=?, points=?, team_id=? where id=?";
 
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-//            setValuesInStatement(stmt, student);
-//            stmt.setInt(6, Integer.decode(student.getId()));
+            setValuesInStatement(stmt, student);
+            stmt.setInt(6, Integer.parseInt(student.getId()));
 
             stmt.executeUpdate();
             System.out.println("Record " + student.getId() + " updated successfully");
-        } catch (SQLException e) {
-            errorMsg = e.getMessage();
+        } catch (NumberFormatException | SQLException e) {
+            errorMsg = e.toString();
             e.printStackTrace();
         }
     }
 
-//    private void setValuesInStatement(PreparedStatement stmt, Student student) throws SQLException {
-//        stmt.setString(1, student.getFirstName());
-//        stmt.setString(2, student.getLastName());
-//        stmt.setInt(3, Integer.decode(student.getAge()));
-//        stmt.setInt(4, Integer.decode(student.getPoints()));
-//        stmt.setInt(5, Integer.decode(student.getTeamId()));
-//    }
+    private void setValuesInStatement(PreparedStatement stmt, Student student)
+            throws SQLException, NumberFormatException {
+        stmt.setString(1, student.getFirstName());
+        stmt.setString(2, student.getLastName());
+        stmt.setInt(3, Integer.parseInt(student.getAge()));
+        stmt.setInt(4, Integer.parseInt(student.getPoints()));
+        stmt.setInt(5, Integer.parseInt(student.getTeamId()));
+    }
 
     public String getErrorMsg() {
         return errorMsg;

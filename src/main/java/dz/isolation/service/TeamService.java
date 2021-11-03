@@ -93,30 +93,30 @@ public class TeamService {
                 teams.add(team);
             }
         } catch (SQLException e) {
-            setErrorMsg(e.getMessage());
+            errorMsg = e.toString();
+//            setErrorMsg(e.toString());
             e.printStackTrace();
         }
         return teams;
     }
 
     public void addTeam(Team team) {
-        String sql = "insert into team (color, points) values (" +
-                "'" + team.getColor() + "', " +
-                "'" + team.getPoints() + "' " +
-                ");";
+//        String sql = "insert into team (color, points) values (" +
+//                "'" + team.getColor() + "', " +
+//                "'" + team.getPoints() + "' " +
+//                ");";
 
-//        String sql = "insert into team (color, points) values (?, ?)";
+        String sql = "insert into team (color, points) values (?, ?)";
 
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-//            stmt.setString(1, team.getColor());
-//            String points = team.getPoints();
-//            stmt.setInt(2, points.length() > 0 ? Integer.parseInt(points) : 0);
+            stmt.setString(1, team.getColor());
+            stmt.setInt(2, Integer.parseInt(team.getPoints()));
             stmt.executeUpdate();
             System.out.println("Team record inserted successfully");
-        } catch (SQLException e) {
-            errorMsg = e.getMessage();
+        } catch (NumberFormatException | SQLException e) {
+            errorMsg = e.toString();
             e.printStackTrace();
         }
     }
@@ -129,34 +129,32 @@ public class TeamService {
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
         } catch (SQLException e) {
-            errorMsg = e.getMessage();
+            errorMsg = e.toString();
             e.printStackTrace();
         }
     }
 
     public void updateTeam(Team team) {
-        String sql = "update team set " +
-                "color=" +
-                "'" + team.getColor() + "', " +
-                "points=" +
-                "'" + team.getPoints() + "' " +
-                " where id=" +
-                "'" + team.getId() + "'";
+//        String sql = "update team set " +
+//                "color=" +
+//                "'" + team.getColor() + "', " +
+//                "points=" +
+//                "'" + team.getPoints() + "' " +
+//                " where id=" +
+//                "'" + team.getId() + "'";
 
-//        String sql = "update team set color=?, points=? where id=?";
+        String sql = "update team set color=?, points=? where id=?";
 
         try (Connection conn = ds.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-//            stmt.setString(1, team.getColor());
-//            Integer points = team.getPoints().length() > 0 ? Integer.decode(team.getPoints()) : null;
-//            stmt.setObject(2, points);
-//            Integer id = team.getId().length() > 0 ? Integer.decode(team.getId()) : null;
-//            stmt.setObject(3, id);
+            stmt.setString(1, team.getColor());
+            stmt.setInt(2, Integer.parseInt(team.getPoints()));
+            stmt.setInt(3, Integer.parseInt(team.getId()));
             stmt.executeUpdate();
             System.out.println("Record " + team.getId() + " updated successfully");
-        } catch (SQLException e) {
-            errorMsg = e.getMessage();
+        } catch (NumberFormatException | SQLException e) {
+            errorMsg = e.toString();
             e.printStackTrace();
         }
     }
@@ -165,9 +163,9 @@ public class TeamService {
         return errorMsg;
     }
 
-    public void setErrorMsg(String errorMsg) {
-        this.errorMsg = errorMsg;
-    }
+//    public void setErrorMsg(String errorMsg) {
+//        this.errorMsg = errorMsg;
+//    }
 
     public void resetError() {
         errorMsg = null;
