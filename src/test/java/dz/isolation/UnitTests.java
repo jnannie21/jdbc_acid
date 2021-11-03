@@ -4,13 +4,12 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import dz.isolation.service.StudentService;
 import dz.isolation.service.TeamService;
-import org.junit.ClassRule;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.FieldSetter;
-import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -20,7 +19,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -28,14 +26,14 @@ import java.io.StringWriter;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-class StudentsServletTest extends Mockito {
+class UnitTests extends Mockito {
     static private StudentsServlet servlet;
     static private HttpServletRequest req;
     static private HttpServletResponse res;
     static private StudentService studentService;
     static private TeamService teamService;
 
-    private static final String URL = "http://localhost:8085/";
+    private static final String URL = "http://localhost:8085/jdbc_acid_war/";
 
 
     @BeforeAll
@@ -75,50 +73,6 @@ class StudentsServletTest extends Mockito {
 //        verify(req, atLeast(1)).getParameter("first_name");
 //        writer.flush();
         assertTrue(stringWriter.toString().contains("Students and teams tables"));
-    }
-
-
-//integration tests
-
-//    @ClassRule
-//    public static DockerComposeContainer dockerComposeContainer =
-//            new DockerComposeContainer(new File("/Users/jnannie/Desktop/jdbc_acid/docker-compose.yml"))
-//                    .withExposedService("postgres", 5432);
-
-    @Test
-    public void mainPage_CheckingTitle_EqualsToPredefinedValues() throws Exception {
-        try (final WebClient webClient = new WebClient()) {
-            HtmlPage page = webClient.getPage(URL);
-            Assertions.assertEquals("Students and teams table", page.getTitleText());
-        }
-    }
-
-    @Test
-    public void mainPage_ChangeTeamColorAndSubmitForm_ChangesApplied() throws Exception {
-//        dockerComposeContainer.start();
-
-//        PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres")
-////                .withCreateContainerCmdModifier({ cmd -> cmd.withName("coordinator") })
-//                .withDatabaseName("postgres")
-//                .withUsername("admin")
-//                .withPassword("admin");
-//        postgreSQLContainer
-//                .withInitScript("q.sql");
-//        postgreSQLContainer.start();
-
-        try (WebClient webClient = new WebClient()) {
-            HtmlPage page1 = webClient.getPage(URL);
-
-            HtmlForm form = page1.getFormByName("change_team1");
-            HtmlButton button = form.getButtonByName("submit_change_team");
-            HtmlTextInput textField = form.getInputByName("color");
-
-            textField.setText("white");
-
-            HtmlPage page2 = button.click();
-            String pageAsText = page2.asText();
-            Assertions.assertTrue(pageAsText.contains("white"));
-        }
     }
 
 }

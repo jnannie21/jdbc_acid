@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +29,8 @@ public class StudentsServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        studentService = new StudentService();
-        teamService = new TeamService();
-        createTables();
+        studentService = new StudentService(null);
+        teamService = new TeamService(null);
     }
 
     @Override
@@ -79,9 +77,9 @@ public class StudentsServlet extends HttpServlet {
     }
 
     private void setReqAttributes(HttpServletRequest req) {
-        List<HashMap<String, String>> students = studentService.getStudents();
+        List<Student> students = studentService.getStudents();
         req.setAttribute("students", students);
-        List<HashMap<String, String>> teams = teamService.getTeams();
+        List<Team> teams = teamService.getTeams();
         req.setAttribute("teams", teams);
         req.setAttribute("studentService", studentService);
         req.setAttribute("teamService", teamService);
@@ -135,109 +133,15 @@ public class StudentsServlet extends HttpServlet {
         teamService.deleteTeam(req.getParameter("id"));
     }
 
-    private void createTables() throws ServletException {
-        try {
-            DataSource ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
-            createTeamTable(ds);
-            createStudentTable(ds);
-        } catch (NamingException e) {
-            throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
-        }
-    }
-
-    private void createStudentTable(DataSource ds) {
-        try(Connection conn = ds.getConnection();
-            Statement stmt = conn.createStatement();
-        ) {
-            if (tableExists(conn, "student")) {
-                return ;
-            }
-            String sql = "CREATE TABLE student" +
-                    " (id SERIAL NOT NULL, " +
-                    " first_name VARCHAR(255) NOT NULL, " +
-                    " CHECK (first_name <> ''), " +
-                    " last_name VARCHAR(255) NOT NULL, " +
-                    " CHECK (last_name <> ''), " +
-                    " age INTEGER NOT NULL, " +
-                    " CHECK (age <> 0), " +
-                    " points INTEGER NOT NULL, " +
-                    " team_id INTEGER not NULL, " +
-                    " PRIMARY KEY (id), " +
-                    " CONSTRAINT fk_team " +
-                    " FOREIGN KEY(team_id) " +
-                    " REFERENCES team(id)) ";
-            stmt.executeUpdate(sql);
-            System.out.println("Table student created...");
-            populateStudentTable();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void populateStudentTable() {
-        Student student = new Student(
-                "user1_first_name",
-                "user1_last_name",
-                "33",
-                "10",
-                "1"
-        );
-        studentService.addStudent(student);
-        student = new Student(
-                "user2_first_name",
-                "user2_last_name",
-                "25",
-                "15",
-                "1"
-        );
-        studentService.addStudent(student);
-    }
-
-    private void createTeamTable(DataSource ds) {
-        try (Connection conn = ds.getConnection();
-            Statement stmt = conn.createStatement();
-        ) {
-            if (tableExists(conn, "team")) {
-                return ;
-            }
-            String sql = "CREATE TABLE team" +
-                    " (id SERIAL not NULL, " +
-                    " color VARCHAR(255) NOT NULL UNIQUE, " +
-                    " CHECK (color <> ''), " +
-                    " points INTEGER NOT NULL, " +
-                    " PRIMARY KEY (id))";
-
-            stmt.executeUpdate(sql);
-            System.out.println("Table team created...");
-            populateTeamTable();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void populateTeamTable() {
-        Team team = new Team(
-                "red",
-                "10"
-        );
-        teamService.addTeam(team);
-        team = new Team(
-                "green",
-                "20"
-        );
-        teamService.addTeam(team);
-    }
-
-    private boolean tableExists(Connection conn, String tableName) throws SQLException {
-        DatabaseMetaData meta = conn.getMetaData();
-        ResultSet resultSet = meta.getTables(
-                null,
-                null,
-                tableName,
-                new String[] {"TABLE"}
-        );
-        return resultSet.next();
-    }
+//    private void createTables() throws ServletException {
+//        try {
+//            DataSource ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
+//            createTeamTable(ds);
+//            createStudentTable(ds);
+//        } catch (NamingException e) {
+//            throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
+//        }
+//    }
 
     private void resetErrors() {
         studentService.resetError();

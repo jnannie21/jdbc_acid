@@ -14,20 +14,84 @@ import java.util.HashMap;
 import java.util.List;
 
 public class StudentService {
-    DataSource ds;
     public static final String tableName = "student";
+
+    private DataSource ds;
     private String errorMsg;
 
-    public StudentService() {
+    public StudentService(DataSource ds) {
         try {
-            ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
+            if ((this.ds = ds) == null) {
+                this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
+            }
+            new TeamService(ds).createTeamTable(this.ds);
+            createStudentTable(this.ds);
         } catch (NamingException e) {
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
     }
 
-    public List<HashMap<String, String>> getStudents() {
-        List<HashMap<String, String>> students = new ArrayList<>();
+    public void createStudentTable(DataSource ds) {
+        try(Connection conn = ds.getConnection();
+            Statement stmt = conn.createStatement();
+        ) {
+            if (tableExists(conn, "student")) {
+                return ;
+            }
+            String sql = "CREATE TABLE student" +
+                    " (id SERIAL NOT NULL, " +
+                    " first_name VARCHAR(255) NOT NULL, " +
+                    " CHECK (first_name <> ''), " +
+                    " last_name VARCHAR(255) NOT NULL, " +
+                    " CHECK (last_name <> ''), " +
+                    " age INTEGER NOT NULL, " +
+                    " CHECK (age <> 0), " +
+                    " points INTEGER NOT NULL, " +
+                    " team_id INTEGER not NULL, " +
+                    " PRIMARY KEY (id), " +
+                    " CONSTRAINT fk_team " +
+                    " FOREIGN KEY(team_id) " +
+                    " REFERENCES team(id)) ";
+            stmt.executeUpdate(sql);
+            System.out.println("Table student created...");
+            populateStudentTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean tableExists(Connection conn, String tableName) throws SQLException {
+        DatabaseMetaData meta = conn.getMetaData();
+        ResultSet resultSet = meta.getTables(
+                null,
+                null,
+                tableName,
+                new String[] {"TABLE"}
+        );
+        return resultSet.next();
+    }
+
+    private void populateStudentTable() {
+        Student student = new Student(
+                "user1_first_name",
+                "user1_last_name",
+                "33",
+                "10",
+                "1"
+        );
+        addStudent(student);
+        student = new Student(
+                "user2_first_name",
+                "user2_last_name",
+                "25",
+                "15",
+                "1"
+        );
+        addStudent(student);
+    }
+
+    public List<Student> getStudents() {
+        List<Student> students = new ArrayList<>();
 
 //        String sql = "select s.id, s.first_name, s.last_name, s.age, s.points, s.team_id, t.color, t.points as team_points from " +
 //                tableName +
@@ -44,13 +108,14 @@ public class StudentService {
             ResultSet rs = stmt.executeQuery();
         ) {
             while (rs.next()) {
-                HashMap<String, String> student = new HashMap<>();
-                student.put("id", rs.getString("id"));
-                student.put("first_name", rs.getString("first_name"));
-                student.put("last_name", rs.getString("last_name"));
-                student.put("age", rs.getString("age"));
-                student.put("points", rs.getString("points"));
-                student.put("team_id", rs.getString("team_id"));
+                Student student = new Student(
+                        rs.getString("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("age"),
+                        rs.getString("points"),
+                        rs.getString("team_id")
+                );
 
 //                ResultSetMetaData rsmd = rs.getMetaData();
 //                for (int i = 1; i <= rsmd.getColumnCount(); i++) {

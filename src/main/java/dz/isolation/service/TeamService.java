@@ -12,20 +12,70 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TeamService {
-    DataSource ds;
     public static final String tableName = "team";
+
+    private DataSource ds;
     private String errorMsg;
 
-    public TeamService() {
+    public TeamService(DataSource ds) {
         try {
-            ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
+            if ((this.ds = ds) == null) {
+                this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
+            }
+            createTeamTable(this.ds);
         } catch (NamingException e) {
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
     }
 
-    public List<HashMap<String, String>> getTeams() {
-        List<HashMap<String, String>> teams = new ArrayList<>();
+    public void createTeamTable(DataSource ds) {
+        try (Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement();
+        ) {
+            if (tableExists(conn, "team")) {
+                return ;
+            }
+            String sql = "CREATE TABLE team" +
+                    " (id SERIAL not NULL, " +
+                    " color VARCHAR(255) NOT NULL UNIQUE, " +
+                    " CHECK (color <> ''), " +
+                    " points INTEGER NOT NULL, " +
+                    " PRIMARY KEY (id))";
+
+            stmt.executeUpdate(sql);
+            System.out.println("Table team created...");
+            populateTeamTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean tableExists(Connection conn, String tableName) throws SQLException {
+        DatabaseMetaData meta = conn.getMetaData();
+        ResultSet resultSet = meta.getTables(
+                null,
+                null,
+                tableName,
+                new String[] {"TABLE"}
+        );
+        return resultSet.next();
+    }
+
+    private void populateTeamTable() {
+        Team team = new Team(
+                "red",
+                "10"
+        );
+        addTeam(team);
+        team = new Team(
+                "green",
+                "20"
+        );
+        addTeam(team);
+    }
+
+    public List<Team> getTeams() {
+        List<Team> teams = new ArrayList<>();
 
         String sql = "select id, color, points from " +
                 tableName +
@@ -35,10 +85,11 @@ public class TeamService {
             ResultSet rs = stmt.executeQuery()
         ) {
             while (rs.next()) {
-                HashMap<String, String> team = new HashMap<>();
-                team.put("id", rs.getString("id"));
-                team.put("color", rs.getString("color"));
-                team.put("points", rs.getString("points"));
+                Team team = new Team(
+                        rs.getString("id"),
+                        rs.getString("color"),
+                        rs.getString("points")
+                );
                 teams.add(team);
             }
         } catch (SQLException e) {
@@ -121,4 +172,6 @@ public class TeamService {
     public void resetError() {
         errorMsg = null;
     }
+
+
 }

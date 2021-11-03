@@ -1,6 +1,8 @@
 <%@ page import="java.util.*" %>
 <%@ page import="dz.isolation.service.StudentService" %>
 <%@ page import="dz.isolation.service.TeamService" %>
+<%@ page import="dz.isolation.model.Team" %>
+<%@ page import="dz.isolation.model.Student" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -40,24 +42,24 @@
 
         <tbody>
         <%
-            List<HashMap<String, String>> students = (List<HashMap<String, String>>)request.getAttribute("students");
-            for (Iterator<HashMap<String, String>> it = students.iterator(); it.hasNext();)
+            List<Student> students = (List<Student>)request.getAttribute("students");
+            for (Iterator<Student> it = students.iterator(); it.hasNext();)
             {
-                HashMap<String, String> student = it.next();
+                Student student = it.next();
         %>
                 <tr>
                     <form action="change_student" method="post">
-                        <td><%=student.get("id") %> <input type="hidden" value="<%=student.get("id") %>" name="id"></td>
-                        <td><input type="text" value="<%=student.get("first_name") %>" name="first_name"/></td>
-                        <td><input type="text" value="<%=student.get("last_name") %>" name="last_name"/></td>
-                        <td><input type="text" value="<%=student.get("age") %>" name="age"/></td>
-                        <td><input type="text" value="<%=student.get("points") %>" name="points"/></td>
-                        <td><input type="text" value="<%=student.get("team_id") %>" name="team_id"/></td>
+                        <td><%=student.getId() %> <input type="hidden" value="<%=student.getId() %>" name="id"></td>
+                        <td><input type="text" value="<%=student.getFirstName() %>" name="first_name"/></td>
+                        <td><input type="text" value="<%=student.getLastName() %>" name="last_name"/></td>
+                        <td><input type="text" value="<%=student.getAge() %>" name="age"/></td>
+                        <td><input type="text" value="<%=student.getPoints() %>" name="points"/></td>
+                        <td><input type="text" value="<%=student.getTeamId() %>" name="team_id"/></td>
                         <td><button type="submit">Change</button></td>
                     </form>
 
                     <form action="delete_student" method="post">
-                        <input type="hidden" value="<%=student.get("id") %>" name="id">
+                        <input type="hidden" value="<%=student.getId() %>" name="id">
                         <td><button type="submit">Delete</button></td>
                     </form>
                 </tr>
@@ -90,21 +92,21 @@
 
         <tbody>
         <%
-            List<HashMap<String, String>> teams = (List<HashMap<String, String>>)request.getAttribute("teams");
-            for (Iterator<HashMap<String, String>> it = teams.iterator(); it.hasNext();)
+            List<Team> teams = (List<Team>)request.getAttribute("teams");
+            for (Iterator<Team> it = teams.iterator(); it.hasNext();)
             {
-                HashMap<String, String> team = it.next();
+                Team team = it.next();
         %>
         <tr>
-            <form action="change_team" method="post" name="change_team<%=team.get("id") %>">
-                <td><%=team.get("id") %> <input type="hidden" value="<%=team.get("id") %>" name="id"></td>
-                <td><input type="text" value="<%=team.get("color") %>" name="color"/></td>
-                <td><input type="text" value="<%=team.get("points") %>" name="points"/></td>
+            <form action="change_team" method="post" name="change_team<%=team.getId() %>">
+                <td><%=team.getId() %> <input type="hidden" value="<%=team.getId() %>" name="id"></td>
+                <td><input type="text" value="<%=team.getColor() %>" name="color"/></td>
+                <td><input type="text" value="<%=team.getPoints() %>" name="points"/></td>
                 <td><button type="submit" name="submit_change_team">Change</button></td>
             </form>
 
             <form action="delete_team" method="post">
-                <input type="hidden" value="<%=team.get("id") %>" name="id">
+                <input type="hidden" value="<%=team.getId() %>" name="id">
                 <td><button type="submit">Delete</button></td>
             </form>
         </tr>
