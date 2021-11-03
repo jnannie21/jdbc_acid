@@ -45,7 +45,7 @@ public class StudentService {
                     " last_name VARCHAR(255) NOT NULL, " +
                     " CHECK (last_name <> ''), " +
                     " age INTEGER NOT NULL, " +
-                    " CHECK (age <> 0), " +
+                    " CHECK (age > 0), " +
                     " points INTEGER NOT NULL, " +
                     " team_id INTEGER not NULL, " +
                     " PRIMARY KEY (id), " +
@@ -73,19 +73,19 @@ public class StudentService {
 
     private void populateStudentTable() {
         Student student = new Student(
-                "user1_first_name",
-                "user1_last_name",
+                "dima",
+                "dimin",
                 "33",
                 "10",
                 "1"
         );
         addStudent(student);
         student = new Student(
-                "user2_first_name",
-                "user2_last_name",
-                "25",
-                "15",
-                "1"
+                "vasia",
+                "vasin",
+                "44",
+                "22",
+                "2"
         );
         addStudent(student);
     }
@@ -149,6 +149,9 @@ public class StudentService {
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
 //            setValuesInStatement(stmt, student);
+
+            System.out.println(sql);
+
             stmt.executeUpdate();
             System.out.println("Student record inserted successfully");
         } catch (SQLException e) {

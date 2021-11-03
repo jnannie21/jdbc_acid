@@ -63,13 +63,13 @@ public class TeamService {
 
     private void populateTeamTable() {
         Team team = new Team(
-                "red",
+                "green",
                 "10"
         );
         addTeam(team);
         team = new Team(
-                "green",
-                "20"
+                "red",
+                "15"
         );
         addTeam(team);
     }
