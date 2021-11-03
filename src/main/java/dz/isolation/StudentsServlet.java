@@ -77,9 +77,9 @@ public class StudentsServlet extends HttpServlet {
     }
 
     private void setReqAttributes(HttpServletRequest req) {
-        List<Student> students = studentService.getStudents();
+        List<Student> students = studentService.getAll();
         req.setAttribute("students", students);
-        List<Team> teams = teamService.getTeams();
+        List<Team> teams = teamService.getAll();
         req.setAttribute("teams", teams);
         req.setAttribute("studentService", studentService);
         req.setAttribute("teamService", teamService);
@@ -93,7 +93,7 @@ public class StudentsServlet extends HttpServlet {
                 req.getParameter("points"),
                 req.getParameter("team_id")
         );
-        studentService.addStudent(student);
+        studentService.insert(student);
     }
 
     private void changeStudent(HttpServletRequest req) {
@@ -105,11 +105,11 @@ public class StudentsServlet extends HttpServlet {
                 req.getParameter("points"),
                 req.getParameter("team_id")
         );
-        studentService.updateStudent(student);
+        studentService.update(student);
     }
 
     private void deleteStudent(HttpServletRequest req) {
-        studentService.deleteStudent(req.getParameter("id"));
+        studentService.delete(req.getParameter("id"));
     }
 
     private void addTeam(HttpServletRequest req) {
@@ -117,7 +117,7 @@ public class StudentsServlet extends HttpServlet {
                 req.getParameter("color"),
                 req.getParameter("points")
         );
-        teamService.addTeam(team);
+        teamService.insert(team);
     }
 
     private void changeTeam(HttpServletRequest req) {
@@ -126,11 +126,11 @@ public class StudentsServlet extends HttpServlet {
                 req.getParameter("color"),
                 req.getParameter("points")
         );
-        teamService.updateTeam(team);
+        teamService.update(team);
     }
 
     private void deleteTeam(HttpServletRequest req) {
-        teamService.deleteTeam(req.getParameter("id"));
+        teamService.delete(req.getParameter("id"));
     }
 
 //    private void createTables() throws ServletException {

@@ -58,22 +58,17 @@ class IntegrationTests {
 //    }
 
     @Test
-    public void dataBaseInitialState_GettingRecords_Success() {
+    public void dataBaseInitialState_GettingStudentRecords_Success() {
         StudentService studentService = new StudentService(ds);
-        List<Student> students = studentService.getStudents();
 
+        List<Student> students = studentService.getAll();
         Assertions.assertEquals(2, students.size());
         Assertions.assertEquals("dima", students.get(0).getFirstName());
         Assertions.assertEquals("2", students.get(1).getTeamId());
-
-        TeamService teamService = new TeamService(ds);
-        List<Team> teams = teamService.getTeams();
-        Assertions.assertEquals(2, teams.size());
-        Assertions.assertEquals("green", teams.get(0).getColor());
     }
 
     @Test
-    public void dataBaseInitialState_UpdatingRecords_Success() {
+    public void dataBaseInitialState_UpdatingStudentRecords_Success() {
         StudentService studentService = new StudentService(ds);
 
         Student newStudent = new Student(
@@ -84,21 +79,21 @@ class IntegrationTests {
                 "0",
                 "2"
         );
-        studentService.updateStudent(newStudent);
+        studentService.update(newStudent);
 
-        List<Student> students = studentService.getStudents();
+        List<Student> students = studentService.getAll();
         Assertions.assertEquals(2, students.size());
         Assertions.assertEquals("Andrei", students.get(0).getFirstName());
         Assertions.assertEquals("0", students.get(0).getPoints());
     }
 
     @Test
-    public void dataBaseInitialState_DeletingRecords_Success() {
+    public void dataBaseInitialState_DeletingStudentRecords_Success() {
         StudentService studentService = new StudentService(ds);
 
-        studentService.deleteStudent("1");
+        studentService.delete("1");
 
-        List<Student> students = studentService.getStudents();
+        List<Student> students = studentService.getAll();
         Assertions.assertEquals(1, students.size());
         Assertions.assertEquals("vasia", students.get(0).getFirstName());
         Assertions.assertEquals("2", students.get(0).getTeamId());
@@ -115,9 +110,9 @@ class IntegrationTests {
                 "0",
                 "2"
         );
-        studentService.addStudent(newStudent);
+        studentService.insert(newStudent);
 
-        List<Student> students = studentService.getStudents();
+        List<Student> students = studentService.getAll();
         Assertions.assertEquals(3, students.size());
         Assertions.assertEquals("Andrei", students.get(2).getFirstName());
         Assertions.assertEquals("0", students.get(2).getPoints());
@@ -135,9 +130,9 @@ class IntegrationTests {
                 "2"
         );
 
-        studentService.addStudent(newStudent);
+        studentService.insert(newStudent);
 
-        List<Student> students = studentService.getStudents();
+        List<Student> students = studentService.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
@@ -153,29 +148,68 @@ class IntegrationTests {
                 "3"
         );
 
-        studentService.addStudent(newStudent);
+        studentService.insert(newStudent);
 
-        List<Student> students = studentService.getStudents();
+        List<Student> students = studentService.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
-//    @Test
-//    public void dataBaseInitialState_ViolateNullConstraint_Failure() {
-//        StudentService studentService = new StudentService(ds);
-//
-//        Student newStudent = new Student(
-//                null,
-//                "Andreev",
-//                "17",
-//                "0",
-//                "2"
-//        );
-//
-//        studentService.addStudent(newStudent);
-//
-//        List<Student> students = studentService.getStudents();
-//        Assertions.assertEquals(2, students.size());
-//    }
+    @Test
+    public void dataBaseInitialState_ViolateFirstNameNullConstraint_Failure() {
+        StudentService studentService = new StudentService(ds);
+
+        Student newStudent = new Student(
+                null,
+                "Andreev",
+                "17",
+                "0",
+                "2"
+        );
+
+        studentService.insert(newStudent);
+
+        List<Student> students = studentService.getAll();
+        Assertions.assertEquals(2, students.size());
+    }
+
+    @Test
+    public void dataBaseInitialState_GettingTeamRecords_Success() {
+        StudentService studentService = new StudentService(ds);
+
+        TeamService teamService = new TeamService(ds);
+        List<Team> teams = teamService.getAll();
+        Assertions.assertEquals(2, teams.size());
+        Assertions.assertEquals("green", teams.get(0).getColor());
+    }
+
+    @Test
+    public void dataBaseInitialState_UpdatingTeamRecords_Success() {
+        TeamService teamService = new TeamService(ds);
+
+        Team newTeam = new Team(
+                "1",
+                "black",
+                "-19"
+        );
+        teamService.update(newTeam);
+
+        List<Team> teams = teamService.getAll();
+        Assertions.assertEquals(2, teams.size());
+        Assertions.assertEquals("black", teams.get(0).getColor());
+        Assertions.assertEquals("-19", teams.get(0).getPoints());
+    }
+
+    @Test
+    public void dataBaseInitialState_DeletingTeamRecords_Success() {
+        TeamService teamService = new TeamService(ds);
+
+        teamService.delete("1");
+
+        List<Team> teams = teamService.getAll();
+        Assertions.assertEquals(1, teams.size());
+        Assertions.assertEquals("red", teams.get(0).getColor());
+        Assertions.assertEquals("15", teams.get(0).getPoints());
+    }
 
 
 

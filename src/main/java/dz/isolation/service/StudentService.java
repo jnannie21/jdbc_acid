@@ -24,14 +24,14 @@ public class StudentService {
             if ((this.ds = ds) == null) {
                 this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
             }
-            new TeamService(ds).createTeamTable(this.ds);
-            createStudentTable(this.ds);
+            new TeamService(ds).createTable(this.ds);
+            createTable(this.ds);
         } catch (NamingException e) {
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
     }
 
-    public void createStudentTable(DataSource ds) {
+    public void createTable(DataSource ds) {
         try(Connection conn = ds.getConnection();
             Statement stmt = conn.createStatement();
         ) {
@@ -54,7 +54,7 @@ public class StudentService {
                     " REFERENCES team(id)) ";
             stmt.executeUpdate(sql);
             System.out.println("Table student created...");
-            populateStudentTable();
+            populateTable();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -71,7 +71,7 @@ public class StudentService {
         return resultSet.next();
     }
 
-    private void populateStudentTable() {
+    private void populateTable() {
         Student student = new Student(
                 "dima",
                 "dimin",
@@ -79,7 +79,7 @@ public class StudentService {
                 "10",
                 "1"
         );
-        addStudent(student);
+        insert(student);
         student = new Student(
                 "vasia",
                 "vasin",
@@ -87,10 +87,10 @@ public class StudentService {
                 "22",
                 "2"
         );
-        addStudent(student);
+        insert(student);
     }
 
-    public List<Student> getStudents() {
+    public List<Student> getAll() {
         List<Student> students = new ArrayList<>();
 
 //        String sql = "select s.id, s.first_name, s.last_name, s.age, s.points, s.team_id, t.color, t.points as team_points from " +
@@ -135,7 +135,7 @@ public class StudentService {
         return students;
     }
 
-    public void addStudent(Student student) {
+    public void insert(Student student) {
 //        String sql = "insert into student (first_name, last_name, age, points, team_id) values (" +
 //                "'" + student.getFirstName() + "', " +
 //                "'" + student.getLastName() + "', " +
@@ -158,7 +158,7 @@ public class StudentService {
         }
     }
 
-    public void deleteStudent(String id) {
+    public void delete(String id) {
         String sql = "delete from student where id=" + id;
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -171,7 +171,7 @@ public class StudentService {
         }
     }
 
-    public void updateStudent(Student student) {
+    public void update(Student student) {
 //        String sql = "update student set " +
 //                "first_name=" +
 //                "'" + student.getFirstName() + "', " +

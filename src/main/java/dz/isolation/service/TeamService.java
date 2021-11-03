@@ -22,13 +22,13 @@ public class TeamService {
             if ((this.ds = ds) == null) {
                 this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
             }
-            createTeamTable(this.ds);
+            createTable(this.ds);
         } catch (NamingException e) {
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
     }
 
-    public void createTeamTable(DataSource ds) {
+    public void createTable(DataSource ds) {
         try (Connection conn = ds.getConnection();
              Statement stmt = conn.createStatement();
         ) {
@@ -44,7 +44,7 @@ public class TeamService {
 
             stmt.executeUpdate(sql);
             System.out.println("Table team created...");
-            populateTeamTable();
+            populateTable();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -61,20 +61,20 @@ public class TeamService {
         return resultSet.next();
     }
 
-    private void populateTeamTable() {
+    private void populateTable() {
         Team team = new Team(
                 "green",
                 "10"
         );
-        addTeam(team);
+        insert(team);
         team = new Team(
                 "red",
                 "15"
         );
-        addTeam(team);
+        insert(team);
     }
 
-    public List<Team> getTeams() {
+    public List<Team> getAll() {
         List<Team> teams = new ArrayList<>();
 
         String sql = "select id, color, points from " +
@@ -100,7 +100,7 @@ public class TeamService {
         return teams;
     }
 
-    public void addTeam(Team team) {
+    public void insert(Team team) {
 //        String sql = "insert into team (color, points) values (" +
 //                "'" + team.getColor() + "', " +
 //                "'" + team.getPoints() + "' " +
@@ -121,7 +121,7 @@ public class TeamService {
         }
     }
 
-    public void deleteTeam(String id) {
+    public void delete(String id) {
         String sql = "delete from team where id=" + id;
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -134,7 +134,7 @@ public class TeamService {
         }
     }
 
-    public void updateTeam(Team team) {
+    public void update(Team team) {
 //        String sql = "update team set " +
 //                "color=" +
 //                "'" + team.getColor() + "', " +
