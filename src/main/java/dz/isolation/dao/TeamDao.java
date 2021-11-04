@@ -20,57 +20,9 @@ public class TeamDao implements Dao<Team> {
             if ((this.ds = ds) == null) {
                 this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres");
             }
-            createTable(this.ds);
         } catch (NamingException e) {
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
-    }
-
-    public void createTable(DataSource ds) {
-        try (Connection conn = ds.getConnection();
-             Statement stmt = conn.createStatement();
-        ) {
-            if (tableExists(conn, "team")) {
-                return ;
-            }
-            String sql = "CREATE TABLE team" +
-                    " (id SERIAL not NULL, " +
-                    " color VARCHAR(255) NOT NULL UNIQUE, " +
-                    " CHECK (color <> ''), " +
-                    " points INTEGER NOT NULL, " +
-                    " PRIMARY KEY (id))";
-
-            stmt.executeUpdate(sql);
-            System.out.println("Table team created...");
-            populateTable();
-        } catch (SQLException e) {
-            errorMsg = e.toString();
-            e.printStackTrace();
-        }
-    }
-
-    private boolean tableExists(Connection conn, String tableName) throws SQLException {
-        DatabaseMetaData meta = conn.getMetaData();
-        ResultSet resultSet = meta.getTables(
-                null,
-                null,
-                tableName,
-                new String[] {"TABLE"}
-        );
-        return resultSet.next();
-    }
-
-    private void populateTable() {
-        Team team = new Team(
-                "green",
-                10
-        );
-        insert(team);
-        team = new Team(
-                "red",
-                15
-        );
-        insert(team);
     }
 
     public List<Team> getAll() {

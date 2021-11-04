@@ -20,14 +20,19 @@ services:
       - maven-repo:/root/.m2
       - ./maven/config/settings.xml:/usr/share/maven/conf/settings.xml
   postgres:
-    image: postgres:12.1
+    image: postgres:13.1
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "admin" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    restart: always
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-    ports:
-      - '5432:5432'
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
     volumes:
-      - postgres-vol:/var/lib/postgresql/data
+      - ./postgres:/docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
 volumes:
   maven-repo:
-  postgres-vol:

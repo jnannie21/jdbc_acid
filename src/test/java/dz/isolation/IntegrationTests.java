@@ -24,9 +24,49 @@ class IntegrationTests {
                 .withDatabaseName("postgres")
                 .withUsername("admin")
                 .withPassword("admin");
+        container
+                .withInitScript("init.sql");
         container.start();
 
         ds = getDataSource(container.getJdbcUrl());
+        populateTeamTable();
+        populateStudentTable();
+    }
+
+    private void populateTeamTable() {
+        TeamDao teamDao = new TeamDao(ds);
+        Team team = new Team(
+                "green",
+                10
+        );
+        teamDao.insert(team);
+        team = new Team(
+                "red",
+                20
+        );
+        teamDao.insert(team);
+
+    }
+
+    private void populateStudentTable() {
+        StudentDao studentDao = new StudentDao(ds);
+
+        Student student = new Student(
+                "dima",
+                "dimin",
+                33,
+                10,
+                1
+        );
+        studentDao.insert(student);
+        student = new Student(
+                "vasia",
+                "vasia",
+                25,
+                15,
+                2
+        );
+        studentDao.insert(student);
     }
 
     private static DataSource getDataSource(String jdbcUrl) {
@@ -234,11 +274,11 @@ class IntegrationTests {
     public void dataBaseInitialState_AddingTeamRecords_Success() {
         TeamDao teamDao = new TeamDao(ds);
 
-        Team newStudent = new Team(
+        Team newTeam = new Team(
                 "black",
                 -123
         );
-        teamDao.insert(newStudent);
+        teamDao.insert(newTeam);
 
         List<Team> teams = teamDao.getAll();
         Assertions.assertEquals(3, teams.size());
@@ -276,12 +316,26 @@ class IntegrationTests {
     @Test
     public void dataBaseInitialState_DeletingTeamRecords_Success() {
         TeamDao teamDao = new TeamDao(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
+        studentDao.delete(1);
         teamDao.delete(1);
 
         List<Team> teams = teamDao.getAll();
         Assertions.assertEquals(1, teams.size());
         Assertions.assertEquals("red", teams.get(0).getColor());
-        Assertions.assertEquals(15, teams.get(0).getPoints());
+        Assertions.assertEquals(20, teams.get(0).getPoints());
+    }
+
+    @Test
+    public void dataBaseInitialState_ViolateForeignKeyConstraintDeletingTeam_Failure() {
+        TeamDao teamDao = new TeamDao(ds);
+
+        teamDao.delete(1);
+
+        List<Team> teams = teamDao.getAll();
+        Assertions.assertEquals(2, teams.size());
+        Assertions.assertEquals("green", teams.get(0).getColor());
+        Assertions.assertEquals(10, teams.get(0).getPoints());
     }
 }

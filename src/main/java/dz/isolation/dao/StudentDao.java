@@ -20,72 +20,10 @@ public class StudentDao implements Dao<Student> {
             if ((this.ds = ds) == null) {
                 this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
             }
-            new TeamDao(ds).createTable(this.ds);
-            createTable(this.ds);
         } catch (NamingException e) {
             errorMsg = e.toString();
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
-    }
-
-    private void createTable(DataSource ds) {
-        try(Connection conn = ds.getConnection();
-            Statement stmt = conn.createStatement();
-        ) {
-            if (tableExists(conn, "student")) {
-                return ;
-            }
-            String sql = "CREATE TABLE student" +
-                    " (id SERIAL NOT NULL, " +
-                    " first_name VARCHAR(255) NOT NULL, " +
-                    " CHECK (first_name <> ''), " +
-                    " last_name VARCHAR(255) NOT NULL, " +
-                    " CHECK (last_name <> ''), " +
-                    " age INTEGER NOT NULL, " +
-                    " CHECK (age > 0 AND age < 200), " +
-                    " points INTEGER NOT NULL, " +
-                    " team_id INTEGER NOT NULL, " +
-                    " PRIMARY KEY (id), " +
-                    " CONSTRAINT fk_team " +
-                    " FOREIGN KEY(team_id) " +
-                    " REFERENCES team(id)) ";
-            stmt.executeUpdate(sql);
-            System.out.println("Table student created...");
-            populateTable();
-        } catch (SQLException e) {
-            errorMsg = e.toString();
-            e.printStackTrace();
-        }
-    }
-
-    private boolean tableExists(Connection conn, String tableName) throws SQLException {
-        DatabaseMetaData meta = conn.getMetaData();
-        ResultSet resultSet = meta.getTables(
-                null,
-                null,
-                tableName,
-                new String[] {"TABLE"}
-        );
-        return resultSet.next();
-    }
-
-    private void populateTable() {
-        Student student = new Student(
-                "dima",
-                "dimin",
-                33,
-                10,
-                1
-        );
-        insert(student);
-        student = new Student(
-                "vasia",
-                "vasin",
-                44,
-                22,
-                2
-        );
-        insert(student);
     }
 
     public List<Student> getAll() {
