@@ -48,14 +48,14 @@
                 Student student = it.next();
         %>
                 <tr>
-                    <form action="change_student" method="post">
+                    <form action="update_student" method="post">
                         <td><%=student.getId() %> <input type="hidden" value="<%=student.getId() %>" name="id"></td>
                         <td><input type="text" value="<%=student.getFirstName() %>" name="first_name"/></td>
                         <td><input type="text" value="<%=student.getLastName() %>" name="last_name"/></td>
                         <td><input type="text" value="<%=student.getAge() %>" name="age"/></td>
                         <td><input type="text" value="<%=student.getPoints() %>" name="points"/></td>
                         <td><input type="text" value="<%=student.getTeamId() %>" name="team_id"/></td>
-                        <td><button type="submit">Change</button></td>
+                        <td><button type="submit">Update</button></td>
                     </form>
 
                     <form action="delete_student" method="post">
@@ -65,7 +65,7 @@
                 </tr>
         <%  } %>
         <tr>
-            <form action="add_student" method="post">
+            <form action="insert_student" method="post">
                 <td>n/a</td>
                 <td><input type="text" value="" name="first_name"/></td>
                 <td><input type="text" value="" name="last_name"/></td>
@@ -98,11 +98,11 @@
                 Team team = it.next();
         %>
         <tr>
-            <form action="change_team" method="post" name="change_team<%=team.getId() %>">
+            <form action="update_team" method="post" name="change_team<%=team.getId() %>">
                 <td><%=team.getId() %> <input type="hidden" value="<%=team.getId() %>" name="id"></td>
                 <td><input type="text" value="<%=team.getColor() %>" name="color"/></td>
                 <td><input type="text" value="<%=team.getPoints() %>" name="points"/></td>
-                <td><button type="submit" name="submit_change_team">Change</button></td>
+                <td><button type="submit" name="submit_change_team">Update</button></td>
             </form>
 
             <form action="delete_team" method="post">
@@ -112,7 +112,7 @@
         </tr>
         <%  } %>
         <tr>
-            <form action="add_team" method="post">
+            <form action="insert_team" method="post">
                 <td>n/a</td>
                 <td><input type="text" value="" name="color"/></td>
                 <td><input type="text" value="" name="points"/></td>

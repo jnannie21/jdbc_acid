@@ -1,9 +1,9 @@
 package dz.isolation.service;
 
+import dz.isolation.dao.Dao;
 import dz.isolation.dao.TeamDao;
 import dz.isolation.model.Team;
 
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -11,8 +11,11 @@ public class TeamService implements Service<Team> {
     private TeamDao teamDao;
     private String errorMsg;
 
-    public TeamService() {
-        teamDao = new TeamDao(null);
+    private Dao<Team> getDao() {
+        if (teamDao == null) {
+            teamDao = new TeamDao(null);
+        }
+        return teamDao;
     }
 
     public List<Team> getAll() {
@@ -25,7 +28,7 @@ public class TeamService implements Service<Team> {
                     req.getParameter("color"),
                     Integer.parseInt(req.getParameter("points"))
             );
-            teamDao.insert(team);
+            getDao().insert(team);
         } catch (NumberFormatException e) {
             errorMsg = e.toString();
         }
@@ -39,7 +42,7 @@ public class TeamService implements Service<Team> {
                     req.getParameter("color"),
                     Integer.parseInt(req.getParameter("points"))
             );
-            teamDao.update(team);
+            getDao().update(team);
         } catch (NumberFormatException e) {
             errorMsg = e.toString();
         }
@@ -47,18 +50,18 @@ public class TeamService implements Service<Team> {
 
     public void delete(HttpServletRequest req) {
         try {
-            teamDao.delete(Integer.parseInt(req.getParameter("id")));
+            getDao().delete(Integer.parseInt(req.getParameter("id")));
         } catch (NumberFormatException e) {
             errorMsg = e.toString();
         }
     }
 
     public String getErrorMsg() {
-        return errorMsg == null ? teamDao.getErrorMsg() : errorMsg;
+        return errorMsg == null ? getDao().getErrorMsg() : errorMsg;
     }
 
     public void resetError() {
         errorMsg = null;
-        teamDao.resetError();
+        getDao().resetError();
     }
 }

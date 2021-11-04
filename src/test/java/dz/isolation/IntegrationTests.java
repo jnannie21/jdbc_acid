@@ -15,9 +15,8 @@ import java.util.List;
 @Testcontainers
 class IntegrationTests {
 
-    private static final String URL = "http://localhost:8085/jdbc_acid_war/";
-    private static PostgreSQLContainer container;
-    private static DataSource ds;
+    private PostgreSQLContainer container;
+    private DataSource ds;
 
     @BeforeEach
     public void setUp() {

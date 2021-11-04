@@ -8,15 +8,18 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class StudentService implements Service<Student> {
-    private Dao studentDao;
+    private Dao<Student> studentDao;
     private String errorMsg;
 
-    public StudentService() {
-        studentDao = new StudentDao(null);
+    private Dao<Student> getDao() {
+        if (studentDao == null) {
+            studentDao = new StudentDao(null);
+        }
+        return studentDao;
     }
 
     public List<Student> getAll() {
-        return studentDao.getAll();
+        return getDao().getAll();
     }
 
     public void insert(HttpServletRequest req) {
@@ -28,7 +31,7 @@ public class StudentService implements Service<Student> {
                     Integer.parseInt(req.getParameter("points")),
                     Integer.parseInt(req.getParameter("team_id"))
             );
-            studentDao.insert(student);
+            getDao().insert(student);
         } catch (NumberFormatException e) {
             errorMsg = e.toString();
         }
@@ -44,7 +47,7 @@ public class StudentService implements Service<Student> {
                     Integer.parseInt(req.getParameter("points")),
                     Integer.parseInt(req.getParameter("team_id"))
             );
-            studentDao.update(student);
+            getDao().update(student);
         } catch (NumberFormatException e) {
             errorMsg = e.toString();
         }
@@ -52,18 +55,18 @@ public class StudentService implements Service<Student> {
 
     public void delete(HttpServletRequest req) {
         try {
-            studentDao.delete(Integer.parseInt(req.getParameter("id")));
+            getDao().delete(Integer.parseInt(req.getParameter("id")));
         } catch (NumberFormatException e) {
             errorMsg = e.toString();
         }
     }
 
     public String getErrorMsg() {
-        return errorMsg == null ? studentDao.getErrorMsg() : errorMsg;
+        return errorMsg == null ? getDao().getErrorMsg() : errorMsg;
     }
 
     public void resetError() {
         errorMsg = null;
-        studentDao.resetError();
+        getDao().resetError();
     }
 }

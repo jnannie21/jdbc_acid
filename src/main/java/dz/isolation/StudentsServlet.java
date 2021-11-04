@@ -49,17 +49,17 @@ public class StudentsServlet extends HttpServlet {
     }
 
     private void routeRequest(HttpServletRequest req) {
-        if (req.getServletPath().equals("/change_student")) {
+        if (req.getServletPath().equals("/update_student")) {
             studentService.update(req);
         } else if (req.getServletPath().equals("/delete_student")) {
             studentService.delete(req);
-        } else if (req.getServletPath().equals("/add_student")) {
+        } else if (req.getServletPath().equals("/insert_student")) {
             studentService.insert(req);
-        } else if (req.getServletPath().equals("/change_team")) {
+        } else if (req.getServletPath().equals("/update_team")) {
             teamService.update(req);
         } else if (req.getServletPath().equals("/delete_team")) {
             teamService.delete(req);
-        } else if (req.getServletPath().equals("/add_team")) {
+        } else if (req.getServletPath().equals("/insert_team")) {
             teamService.insert(req);
         }
     }

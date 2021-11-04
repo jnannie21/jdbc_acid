@@ -18,7 +18,7 @@ public class TeamDao implements Dao<Team> {
     public TeamDao(DataSource ds) {
         try {
             if ((this.ds = ds) == null) {
-                this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
+                this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres");
             }
             createTable(this.ds);
         } catch (NamingException e) {
