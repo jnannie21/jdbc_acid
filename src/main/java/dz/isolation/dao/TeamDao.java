@@ -63,12 +63,12 @@ public class TeamDao implements Dao<Team> {
     private void populateTable() {
         Team team = new Team(
                 "green",
-                "10"
+                10
         );
         insert(team);
         team = new Team(
                 "red",
-                "15"
+                15
         );
         insert(team);
     }
@@ -85,9 +85,9 @@ public class TeamDao implements Dao<Team> {
         ) {
             while (rs.next()) {
                 Team team = new Team(
-                        rs.getString("id"),
+                        rs.getInt("id"),
                         rs.getString("color"),
-                        rs.getString("points")
+                        rs.getInt("points")
                 );
                 teams.add(team);
             }
@@ -105,21 +105,21 @@ public class TeamDao implements Dao<Team> {
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             stmt.setString(1, team.getColor());
-            stmt.setInt(2, Integer.parseInt(team.getPoints()));
+            stmt.setInt(2, team.getPoints());
             stmt.executeUpdate();
             System.out.println("Team record inserted successfully");
-        } catch (NumberFormatException | SQLException e) {
+        } catch (SQLException e) {
             errorMsg = e.toString();
             e.printStackTrace();
         }
     }
 
-    public void delete(String id) {
+    public void delete(int id) {
         String sql = "delete from team where id=?";
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-            stmt.setInt(1, Integer.parseInt(id));
+            stmt.setInt(1, id);
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
         } catch (SQLException e) {
@@ -135,11 +135,11 @@ public class TeamDao implements Dao<Team> {
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             stmt.setString(1, team.getColor());
-            stmt.setInt(2, Integer.parseInt(team.getPoints()));
-            stmt.setInt(3, Integer.parseInt(team.getId()));
+            stmt.setInt(2, team.getPoints());
+            stmt.setInt(3, team.getId());
             stmt.executeUpdate();
             System.out.println("Record " + team.getId() + " updated successfully");
-        } catch (NumberFormatException | SQLException e) {
+        } catch (SQLException e) {
             errorMsg = e.toString();
             e.printStackTrace();
         }

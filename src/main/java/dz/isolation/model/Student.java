@@ -1,19 +1,19 @@
 package dz.isolation.model;
 
 public class Student {
-    private String id;
+    private int id;
     private String firstName;
     private String lastName;
-    private String age;
-    private String points;
-    private String teamId;
+    private int age;
+    private int points;
+    private int teamId;
 
-    public Student(String id,
+    public Student(int id,
                    String firstName,
                    String lastName,
-                   String age,
-                   String points,
-                   String teamId
+                   int age,
+                   int points,
+                   int teamId
     ) {
         this.id = id;
         this.firstName = firstName;
@@ -25,14 +25,14 @@ public class Student {
 
     public Student(String firstName,
                    String lastName,
-                   String age,
-                   String points,
-                   String teamId
+                   int age,
+                   int points,
+                   int teamId
     ) {
-        this(null, firstName, lastName, age, points, teamId);
+        this(0, firstName, lastName, age, points, teamId);
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -44,15 +44,39 @@ public class Student {
         return lastName;
     }
 
-    public String getAge() {
+    public int getAge() {
         return age;
     }
 
-    public String getPoints() {
+    public int getPoints() {
         return points;
     }
 
-    public String getTeamId() {
+    public int getTeamId() {
         return teamId;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
     }
 }

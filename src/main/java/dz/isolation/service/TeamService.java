@@ -3,11 +3,13 @@ package dz.isolation.service;
 import dz.isolation.dao.TeamDao;
 import dz.isolation.model.Team;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class TeamService implements Service<Team> {
     private TeamDao teamDao;
+    private String errorMsg;
 
     public TeamService() {
         teamDao = new TeamDao(null);
@@ -18,31 +20,45 @@ public class TeamService implements Service<Team> {
     }
 
     public void insert(HttpServletRequest req) {
-        Team team = new Team(
-                req.getParameter("color"),
-                req.getParameter("points")
-        );
-        teamDao.insert(team);
+        try {
+            Team team = new Team(
+                    req.getParameter("color"),
+                    Integer.parseInt(req.getParameter("points"))
+            );
+            teamDao.insert(team);
+        } catch (NumberFormatException e) {
+            errorMsg = e.toString();
+        }
+
     }
 
     public void update(HttpServletRequest req) {
-        Team team = new Team(
-                req.getParameter("id"),
-                req.getParameter("color"),
-                req.getParameter("points")
-        );
-        teamDao.update(team);
+        try {
+            Team team = new Team(
+                    Integer.parseInt(req.getParameter("id")),
+                    req.getParameter("color"),
+                    Integer.parseInt(req.getParameter("points"))
+            );
+            teamDao.update(team);
+        } catch (NumberFormatException e) {
+            errorMsg = e.toString();
+        }
     }
 
     public void delete(HttpServletRequest req) {
-        teamDao.delete(req.getParameter("id"));
+        try {
+            teamDao.delete(Integer.parseInt(req.getParameter("id")));
+        } catch (NumberFormatException e) {
+            errorMsg = e.toString();
+        }
     }
 
     public String getErrorMsg() {
-        return teamDao.getErrorMsg();
+        return errorMsg == null ? teamDao.getErrorMsg() : errorMsg;
     }
 
     public void resetError() {
+        errorMsg = null;
         teamDao.resetError();
     }
 }

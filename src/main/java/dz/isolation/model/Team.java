@@ -1,21 +1,22 @@
 package dz.isolation.model;
 
 public class Team {
-    String id;
+    int id;
     String color;
-    String points;
+    int points;
 
-    public Team(String id, String color, String points) {
+    public Team(int id, String color, int points) {
         this.id = id;
         this.color = color;
         this.points = points;
     }
 
-    public Team(String color, String points) {
-        this(null, color, points);
+    public Team(String color, int points) {
+        this.color = color;
+        this.points = points;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -23,7 +24,19 @@ public class Team {
         return color;
     }
 
-    public String getPoints() {
+    public int getPoints() {
         return points;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

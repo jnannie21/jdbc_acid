@@ -9,6 +9,7 @@ import java.util.List;
 
 public class StudentService implements Service<Student> {
     private Dao studentDao;
+    private String errorMsg;
 
     public StudentService() {
         studentDao = new StudentDao(null);
@@ -19,37 +20,50 @@ public class StudentService implements Service<Student> {
     }
 
     public void insert(HttpServletRequest req) {
-        Student student = new Student(
-                req.getParameter("first_name"),
-                req.getParameter("last_name"),
-                req.getParameter("age"),
-                req.getParameter("points"),
-                req.getParameter("team_id")
-        );
-        studentDao.insert(student);
+        try {
+            Student student = new Student(
+                    req.getParameter("first_name"),
+                    req.getParameter("last_name"),
+                    Integer.parseInt(req.getParameter("age")),
+                    Integer.parseInt(req.getParameter("points")),
+                    Integer.parseInt(req.getParameter("team_id"))
+            );
+            studentDao.insert(student);
+        } catch (NumberFormatException e) {
+            errorMsg = e.toString();
+        }
     }
 
     public void update(HttpServletRequest req) {
-        Student student = new Student(
-                req.getParameter("id"),
-                req.getParameter("first_name"),
-                req.getParameter("last_name"),
-                req.getParameter("age"),
-                req.getParameter("points"),
-                req.getParameter("team_id")
-        );
-        studentDao.update(student);
+        try {
+            Student student = new Student(
+                    Integer.parseInt(req.getParameter("id")),
+                    req.getParameter("first_name"),
+                    req.getParameter("last_name"),
+                    Integer.parseInt(req.getParameter("age")),
+                    Integer.parseInt(req.getParameter("points")),
+                    Integer.parseInt(req.getParameter("team_id"))
+            );
+            studentDao.update(student);
+        } catch (NumberFormatException e) {
+            errorMsg = e.toString();
+        }
     }
 
     public void delete(HttpServletRequest req) {
-        studentDao.delete(req.getParameter("id"));
+        try {
+            studentDao.delete(Integer.parseInt(req.getParameter("id")));
+        } catch (NumberFormatException e) {
+            errorMsg = e.toString();
+        }
     }
 
     public String getErrorMsg() {
-        return studentDao.getErrorMsg();
+        return errorMsg == null ? studentDao.getErrorMsg() : errorMsg;
     }
 
     public void resetError() {
+        errorMsg = null;
         studentDao.resetError();
     }
 }

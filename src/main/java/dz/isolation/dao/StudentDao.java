@@ -23,6 +23,7 @@ public class StudentDao implements Dao<Student> {
             new TeamDao(ds).createTable(this.ds);
             createTable(this.ds);
         } catch (NamingException e) {
+            errorMsg = e.toString();
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
     }
@@ -41,7 +42,7 @@ public class StudentDao implements Dao<Student> {
                     " last_name VARCHAR(255) NOT NULL, " +
                     " CHECK (last_name <> ''), " +
                     " age INTEGER NOT NULL, " +
-                    " CHECK (age > 0), " +
+                    " CHECK (age > 0 AND age < 200), " +
                     " points INTEGER NOT NULL, " +
                     " team_id INTEGER NOT NULL, " +
                     " PRIMARY KEY (id), " +
@@ -72,17 +73,17 @@ public class StudentDao implements Dao<Student> {
         Student student = new Student(
                 "dima",
                 "dimin",
-                "33",
-                "10",
-                "1"
+                33,
+                10,
+                1
         );
         insert(student);
         student = new Student(
                 "vasia",
                 "vasin",
-                "44",
-                "22",
-                "2"
+                44,
+                22,
+                2
         );
         insert(student);
     }
@@ -100,12 +101,12 @@ public class StudentDao implements Dao<Student> {
         ) {
             while (rs.next()) {
                 Student student = new Student(
-                        rs.getString("id"),
+                        rs.getInt("id"),
                         rs.getString("first_name"),
                         rs.getString("last_name"),
-                        rs.getString("age"),
-                        rs.getString("points"),
-                        rs.getString("team_id")
+                        rs.getInt("age"),
+                        rs.getInt("points"),
+                        rs.getInt("team_id")
                 );
 
                 students.add(student);
@@ -133,12 +134,12 @@ public class StudentDao implements Dao<Student> {
         }
     }
 
-    public void delete(String id) {
+    public void delete(int id) {
         String sql = "delete from student where id=?";
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
-            stmt.setInt(1, Integer.parseInt(id));
+            stmt.setInt(1, id);
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
         } catch (NumberFormatException | SQLException e) {
@@ -154,7 +155,7 @@ public class StudentDao implements Dao<Student> {
              PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             setValuesInStatement(stmt, student);
-            stmt.setInt(6, Integer.parseInt(student.getId()));
+            stmt.setInt(6, student.getId());
 
             stmt.executeUpdate();
             System.out.println("Record " + student.getId() + " updated successfully");
@@ -168,18 +169,14 @@ public class StudentDao implements Dao<Student> {
             throws SQLException, NumberFormatException {
         stmt.setString(1, student.getFirstName());
         stmt.setString(2, student.getLastName());
-        stmt.setInt(3, Integer.parseInt(student.getAge()));
-        stmt.setInt(4, Integer.parseInt(student.getPoints()));
-        stmt.setInt(5, Integer.parseInt(student.getTeamId()));
+        stmt.setInt(3, student.getAge());
+        stmt.setInt(4, student.getPoints());
+        stmt.setInt(5, student.getTeamId());
     }
 
     public String getErrorMsg() {
         return errorMsg;
     }
-
-//    public void setErrorMsg(String errorMsg) {
-//        this.errorMsg = errorMsg;
-//    }
 
     public void resetError() {
         errorMsg = null;
