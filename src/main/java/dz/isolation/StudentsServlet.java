@@ -1,22 +1,17 @@
 package dz.isolation;
 
+import dz.isolation.dao.StudentDao;
+import dz.isolation.dao.TeamDao;
 import dz.isolation.model.Student;
 import dz.isolation.model.Team;
-import dz.isolation.service.StudentService;
-import dz.isolation.service.TeamService;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.*;
-import java.util.HashMap;
 import java.util.List;
 
 @WebServlet(
@@ -24,13 +19,13 @@ import java.util.List;
         urlPatterns = "/"
 )
 public class StudentsServlet extends HttpServlet {
-    private StudentService studentService;
-    private TeamService teamService;
+    private StudentDao studentDao;
+    private TeamDao teamDao;
 
     @Override
     public void init() throws ServletException {
-        studentService = new StudentService(null);
-        teamService = new TeamService(null);
+        studentDao = new StudentDao(null);
+        teamDao = new TeamDao(null);
     }
 
     @Override
@@ -77,12 +72,12 @@ public class StudentsServlet extends HttpServlet {
     }
 
     private void setReqAttributes(HttpServletRequest req) {
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         req.setAttribute("students", students);
-        List<Team> teams = teamService.getAll();
+        List<Team> teams = teamDao.getAll();
         req.setAttribute("teams", teams);
-        req.setAttribute("studentService", studentService);
-        req.setAttribute("teamService", teamService);
+        req.setAttribute("studentDao", studentDao);
+        req.setAttribute("teamDao", teamDao);
     }
 
     private void addStudent(HttpServletRequest req) {
@@ -93,7 +88,7 @@ public class StudentsServlet extends HttpServlet {
                 req.getParameter("points"),
                 req.getParameter("team_id")
         );
-        studentService.insert(student);
+        studentDao.insert(student);
     }
 
     private void changeStudent(HttpServletRequest req) {
@@ -105,11 +100,11 @@ public class StudentsServlet extends HttpServlet {
                 req.getParameter("points"),
                 req.getParameter("team_id")
         );
-        studentService.update(student);
+        studentDao.update(student);
     }
 
     private void deleteStudent(HttpServletRequest req) {
-        studentService.delete(req.getParameter("id"));
+        studentDao.delete(req.getParameter("id"));
     }
 
     private void addTeam(HttpServletRequest req) {
@@ -117,7 +112,7 @@ public class StudentsServlet extends HttpServlet {
                 req.getParameter("color"),
                 req.getParameter("points")
         );
-        teamService.insert(team);
+        teamDao.insert(team);
     }
 
     private void changeTeam(HttpServletRequest req) {
@@ -126,11 +121,11 @@ public class StudentsServlet extends HttpServlet {
                 req.getParameter("color"),
                 req.getParameter("points")
         );
-        teamService.update(team);
+        teamDao.update(team);
     }
 
     private void deleteTeam(HttpServletRequest req) {
-        teamService.delete(req.getParameter("id"));
+        teamDao.delete(req.getParameter("id"));
     }
 
 //    private void createTables() throws ServletException {
@@ -144,8 +139,8 @@ public class StudentsServlet extends HttpServlet {
 //    }
 
     private void resetErrors() {
-        studentService.resetError();
-        teamService.resetError();
+        studentDao.resetError();
+        teamDao.resetError();
     }
 
 }

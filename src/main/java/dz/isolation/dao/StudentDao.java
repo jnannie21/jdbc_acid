@@ -1,30 +1,26 @@
-package dz.isolation.service;
+package dz.isolation.dao;
 
 import dz.isolation.model.Student;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class StudentService {
+public class StudentDao implements Dao<Student> {
     public static final String tableName = "student";
 
     private DataSource ds;
     private String errorMsg;
 
-    public StudentService(DataSource ds) {
+    public StudentDao(DataSource ds) {
         try {
             if ((this.ds = ds) == null) {
                 this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
             }
-            new TeamService(ds).createTable(this.ds);
+            new TeamDao(ds).createTable(this.ds);
             createTable(this.ds);
         } catch (NamingException e) {
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
@@ -159,13 +155,14 @@ public class StudentService {
     }
 
     public void delete(String id) {
-        String sql = "delete from student where id=" + id;
+        String sql = "delete from student where id=?";
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
+            stmt.setInt(1, Integer.parseInt(id));
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
-        } catch (SQLException e) {
+        } catch (NumberFormatException | SQLException e) {
             errorMsg = e.toString();
             e.printStackTrace();
         }

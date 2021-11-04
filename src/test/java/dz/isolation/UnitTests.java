@@ -1,16 +1,11 @@
 package dz.isolation;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.*;
-import dz.isolation.service.StudentService;
-import dz.isolation.service.TeamService;
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.junit.jupiter.api.Assertions;
+import dz.isolation.dao.StudentDao;
+import dz.isolation.dao.TeamDao;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.FieldSetter;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.servlet.RequestDispatcher;
@@ -30,8 +25,8 @@ class UnitTests extends Mockito {
     static private StudentsServlet servlet;
     static private HttpServletRequest req;
     static private HttpServletResponse res;
-    static private StudentService studentService;
-    static private TeamService teamService;
+    static private StudentDao studentDao;
+    static private TeamDao teamDao;
 
     private static final String URL = "http://localhost:8085/jdbc_acid_war/";
 
@@ -40,8 +35,8 @@ class UnitTests extends Mockito {
     static public void setUp() {
         req = mock(HttpServletRequest.class);
         res = mock(HttpServletResponse.class);
-        studentService = mock(StudentService.class);
-        teamService = mock(TeamService.class);
+        studentDao = mock(StudentDao.class);
+        teamDao = mock(TeamDao.class);
     }
 
     @Test
@@ -65,8 +60,8 @@ class UnitTests extends Mockito {
 
         StudentsServlet servlet = new StudentsServlet();
 
-        FieldSetter.setField(servlet, servlet.getClass().getDeclaredField("studentService"), studentService);
-        FieldSetter.setField(servlet, servlet.getClass().getDeclaredField("teamService"), teamService);
+        FieldSetter.setField(servlet, servlet.getClass().getDeclaredField("studentService"), studentDao);
+        FieldSetter.setField(servlet, servlet.getClass().getDeclaredField("teamService"), teamDao);
 
         servlet.doGet(req, res);
 

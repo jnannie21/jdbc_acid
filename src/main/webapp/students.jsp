@@ -1,8 +1,10 @@
 <%@ page import="java.util.*" %>
-<%@ page import="dz.isolation.service.StudentService" %>
-<%@ page import="dz.isolation.service.TeamService" %>
+<%@ page import="dz.isolation.dao.StudentDao" %>
+<%@ page import="dz.isolation.dao.TeamDao" %>
 <%@ page import="dz.isolation.model.Team" %>
 <%@ page import="dz.isolation.model.Student" %>
+<%@ page import="dz.isolation.dao.StudentDao" %>
+<%@ page import="dz.isolation.dao.TeamDao" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -11,10 +13,12 @@
 <body>
     <div style="font-size: larger; color: brown">
             <%
-                StudentService studentService = (StudentService) request.getAttribute("studentService");
-                TeamService teamService = (TeamService) request.getAttribute("teamService");
-                String studentServiceError = studentService.getErrorMsg();
-                String teamServiceError = teamService.getErrorMsg();
+                StudentDao studentDao = (StudentDao) request.getAttribute("studentDao");
+                System.out.println("studentDao");
+                System.out.println(studentDao);
+                TeamDao teamDao = (TeamDao) request.getAttribute("teamDao");
+                String studentServiceError = studentDao.getErrorMsg();
+                String teamServiceError = teamDao.getErrorMsg();
 
                 if (studentServiceError != null) {
                     out.print(studentServiceError);

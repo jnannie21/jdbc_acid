@@ -1,6 +1,5 @@
-package dz.isolation.service;
+package dz.isolation.dao;
 
-import dz.isolation.model.Student;
 import dz.isolation.model.Team;
 
 import javax.naming.InitialContext;
@@ -8,16 +7,15 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class TeamService {
+public class TeamDao implements Dao<Team>{
     public static final String tableName = "team";
 
     private DataSource ds;
     private String errorMsg;
 
-    public TeamService(DataSource ds) {
+    public TeamDao(DataSource ds) {
         try {
             if ((this.ds = ds) == null) {
                 this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
@@ -122,10 +120,11 @@ public class TeamService {
     }
 
     public void delete(String id) {
-        String sql = "delete from team where id=" + id;
+        String sql = "delete from team where id=?";
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
+            stmt.setInt(1, Integer.parseInt(id));
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
         } catch (SQLException e) {

@@ -1,22 +1,16 @@
 package dz.isolation;
 
+import dz.isolation.dao.StudentDao;
+import dz.isolation.dao.TeamDao;
 import dz.isolation.model.Student;
 import dz.isolation.model.Team;
-import dz.isolation.service.StudentService;
-import dz.isolation.service.TeamService;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.jupiter.api.*;
-import org.mockito.Mockito;
-import org.postgresql.util.PSQLException;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
-import javax.xml.crypto.Data;
-import java.util.ConcurrentModificationException;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 class IntegrationTests {
@@ -59,7 +53,7 @@ class IntegrationTests {
 
     @Test
     public void dataBaseInitialState_AddingStudentRecords_Success() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "Andrei",
@@ -68,9 +62,9 @@ class IntegrationTests {
                 "0",
                 "2"
         );
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(3, students.size());
         Assertions.assertEquals("Andrei", students.get(2).getFirstName());
         Assertions.assertEquals("0", students.get(2).getPoints());
@@ -78,9 +72,9 @@ class IntegrationTests {
 
     @Test
     public void dataBaseInitialState_GettingStudentRecords_Success() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
         Assertions.assertEquals("dima", students.get(0).getFirstName());
         Assertions.assertEquals("2", students.get(1).getTeamId());
@@ -88,7 +82,7 @@ class IntegrationTests {
 
     @Test
     public void dataBaseInitialState_UpdatingStudentRecords_Success() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "1",
@@ -98,9 +92,9 @@ class IntegrationTests {
                 "0",
                 "2"
         );
-        studentService.update(newStudent);
+        studentDao.update(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
         Assertions.assertEquals("Andrei", students.get(0).getFirstName());
         Assertions.assertEquals("0", students.get(0).getPoints());
@@ -108,11 +102,11 @@ class IntegrationTests {
 
     @Test
     public void dataBaseInitialState_DeletingStudentRecords_Success() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
-        studentService.delete("1");
+        studentDao.delete("1");
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(1, students.size());
         Assertions.assertEquals("vasia", students.get(0).getFirstName());
         Assertions.assertEquals("2", students.get(0).getTeamId());
@@ -120,7 +114,7 @@ class IntegrationTests {
 
     @Test
     public void dataBaseInitialState_ViolateAgeConstraint_Failure() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "Andrei",
@@ -130,15 +124,15 @@ class IntegrationTests {
                 "2"
         );
 
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
     public void dataBaseInitialState_ViolateForeignKeyConstraint_Failure() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "Andrei",
@@ -148,15 +142,15 @@ class IntegrationTests {
                 "3"
         );
 
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
     public void dataBaseInitialState_ViolateFirstNameNotNullConstraint_Failure() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 null,
@@ -166,15 +160,15 @@ class IntegrationTests {
                 "2"
         );
 
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
     public void dataBaseInitialState_ViolateFirstNameNotEmptyConstraint_Failure() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "",
@@ -184,15 +178,15 @@ class IntegrationTests {
                 "2"
         );
 
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
     public void dataBaseInitialState_ViolateLastNameNotNullConstraint_Failure() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "first_name",
@@ -202,15 +196,15 @@ class IntegrationTests {
                 "2"
         );
 
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
     public void dataBaseInitialState_ViolateLastNameNotEmptyConstraint_Failure() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "first_name",
@@ -220,15 +214,15 @@ class IntegrationTests {
                 "2"
         );
 
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
     public void dataBaseInitialState_ViolateAgeNotNullConstraint_Failure() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "first_name",
@@ -238,15 +232,15 @@ class IntegrationTests {
                 "2"
         );
 
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
     public void dataBaseInitialState_ViolateAgeBiggerThanZeroConstraint_Failure() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "first_name",
@@ -256,15 +250,15 @@ class IntegrationTests {
                 "2"
         );
 
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
     public void dataBaseInitialState_ViolatePointsNotNullConstraint_Failure() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "first_name",
@@ -274,15 +268,15 @@ class IntegrationTests {
                 "2"
         );
 
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
     public void dataBaseInitialState_ViolateTeamIdNotNullConstraint_Failure() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
                 "first_name",
@@ -292,23 +286,23 @@ class IntegrationTests {
                 null
         );
 
-        studentService.insert(newStudent);
+        studentDao.insert(newStudent);
 
-        List<Student> students = studentService.getAll();
+        List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
     public void dataBaseInitialState_AddingTeamRecords_Success() {
-        TeamService teamService = new TeamService(ds);
+        TeamDao teamDao = new TeamDao(ds);
 
         Team newStudent = new Team(
                 "black",
                 "-123"
         );
-        teamService.insert(newStudent);
+        teamDao.insert(newStudent);
 
-        List<Team> teams = teamService.getAll();
+        List<Team> teams = teamDao.getAll();
         Assertions.assertEquals(3, teams.size());
         Assertions.assertEquals("black", teams.get(2).getColor());
         Assertions.assertEquals("-123", teams.get(2).getPoints());
@@ -316,26 +310,26 @@ class IntegrationTests {
 
     @Test
     public void dataBaseInitialState_GettingTeamRecords_Success() {
-        StudentService studentService = new StudentService(ds);
+        StudentDao studentDao = new StudentDao(ds);
 
-        TeamService teamService = new TeamService(ds);
-        List<Team> teams = teamService.getAll();
+        TeamDao teamDao = new TeamDao(ds);
+        List<Team> teams = teamDao.getAll();
         Assertions.assertEquals(2, teams.size());
         Assertions.assertEquals("green", teams.get(0).getColor());
     }
 
     @Test
     public void dataBaseInitialState_UpdatingTeamRecords_Success() {
-        TeamService teamService = new TeamService(ds);
+        TeamDao teamDao = new TeamDao(ds);
 
         Team newTeam = new Team(
                 "1",
                 "black",
                 "-19"
         );
-        teamService.update(newTeam);
+        teamDao.update(newTeam);
 
-        List<Team> teams = teamService.getAll();
+        List<Team> teams = teamDao.getAll();
         Assertions.assertEquals(2, teams.size());
         Assertions.assertEquals("black", teams.get(0).getColor());
         Assertions.assertEquals("-19", teams.get(0).getPoints());
@@ -343,11 +337,11 @@ class IntegrationTests {
 
     @Test
     public void dataBaseInitialState_DeletingTeamRecords_Success() {
-        TeamService teamService = new TeamService(ds);
+        TeamDao teamDao = new TeamDao(ds);
 
-        teamService.delete("1");
+        teamDao.delete("1");
 
-        List<Team> teams = teamService.getAll();
+        List<Team> teams = teamDao.getAll();
         Assertions.assertEquals(1, teams.size());
         Assertions.assertEquals("red", teams.get(0).getColor());
         Assertions.assertEquals("15", teams.get(0).getPoints());
