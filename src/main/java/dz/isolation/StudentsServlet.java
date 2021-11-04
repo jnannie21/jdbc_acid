@@ -1,9 +1,9 @@
 package dz.isolation;
 
-import dz.isolation.dao.StudentDao;
-import dz.isolation.dao.TeamDao;
 import dz.isolation.model.Student;
 import dz.isolation.model.Team;
+import dz.isolation.service.StudentService;
+import dz.isolation.service.TeamService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,19 +19,18 @@ import java.util.List;
         urlPatterns = "/"
 )
 public class StudentsServlet extends HttpServlet {
-    private StudentDao studentDao;
-    private TeamDao teamDao;
+    private StudentService studentService;
+    private TeamService teamService;
 
     @Override
     public void init() throws ServletException {
-        studentDao = new StudentDao(null);
-        teamDao = new TeamDao(null);
+        studentService = new StudentService();
+        teamService = new TeamService();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
         resetErrors();
 
         generateView(req, resp);
@@ -50,17 +49,17 @@ public class StudentsServlet extends HttpServlet {
 
     private void routeRequest(HttpServletRequest req) {
         if (req.getServletPath().equals("/change_student")) {
-            changeStudent(req);
+            studentService.changeStudent(req);
         } else if (req.getServletPath().equals("/delete_student")) {
-            deleteStudent(req);
+            studentService.deleteStudent(req);
         } else if (req.getServletPath().equals("/add_student")) {
-            addStudent(req);
+            studentService.addStudent(req);
         } else if (req.getServletPath().equals("/change_team")) {
-            changeTeam(req);
+            teamService.changeTeam(req);
         } else if (req.getServletPath().equals("/delete_team")) {
-            deleteTeam(req);
+            teamService.deleteTeam(req);
         } else if (req.getServletPath().equals("/add_team")) {
-            addTeam(req);
+            teamService.addTeam(req);
         }
     }
 
@@ -72,61 +71,14 @@ public class StudentsServlet extends HttpServlet {
     }
 
     private void setReqAttributes(HttpServletRequest req) {
-        List<Student> students = studentDao.getAll();
+        List<Student> students = studentService.getAll();
         req.setAttribute("students", students);
-        List<Team> teams = teamDao.getAll();
+        List<Team> teams = teamService.getAll();
         req.setAttribute("teams", teams);
-        req.setAttribute("studentDao", studentDao);
-        req.setAttribute("teamDao", teamDao);
+        req.setAttribute("studentService", studentService);
+        req.setAttribute("teamService", teamService);
     }
 
-    private void addStudent(HttpServletRequest req) {
-        Student student = new Student(
-                req.getParameter("first_name"),
-                req.getParameter("last_name"),
-                req.getParameter("age"),
-                req.getParameter("points"),
-                req.getParameter("team_id")
-        );
-        studentDao.insert(student);
-    }
-
-    private void changeStudent(HttpServletRequest req) {
-        Student student = new Student(
-                req.getParameter("id"),
-                req.getParameter("first_name"),
-                req.getParameter("last_name"),
-                req.getParameter("age"),
-                req.getParameter("points"),
-                req.getParameter("team_id")
-        );
-        studentDao.update(student);
-    }
-
-    private void deleteStudent(HttpServletRequest req) {
-        studentDao.delete(req.getParameter("id"));
-    }
-
-    private void addTeam(HttpServletRequest req) {
-        Team team = new Team(
-                req.getParameter("color"),
-                req.getParameter("points")
-        );
-        teamDao.insert(team);
-    }
-
-    private void changeTeam(HttpServletRequest req) {
-        Team team = new Team(
-                req.getParameter("id"),
-                req.getParameter("color"),
-                req.getParameter("points")
-        );
-        teamDao.update(team);
-    }
-
-    private void deleteTeam(HttpServletRequest req) {
-        teamDao.delete(req.getParameter("id"));
-    }
 
 //    private void createTables() throws ServletException {
 //        try {
@@ -139,8 +91,8 @@ public class StudentsServlet extends HttpServlet {
 //    }
 
     private void resetErrors() {
-        studentDao.resetError();
-        teamDao.resetError();
+        studentService.resetError();
+        teamService.resetError();
     }
 
 }

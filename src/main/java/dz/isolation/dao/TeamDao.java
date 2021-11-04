@@ -162,13 +162,7 @@ public class TeamDao implements Dao<Team>{
         return errorMsg;
     }
 
-//    public void setErrorMsg(String errorMsg) {
-//        this.errorMsg = errorMsg;
-//    }
-
     public void resetError() {
         errorMsg = null;
     }
-
-
 }
