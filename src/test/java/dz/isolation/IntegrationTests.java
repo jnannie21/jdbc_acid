@@ -29,45 +29,45 @@ class IntegrationTests {
         container.start();
 
         ds = getDataSource(container.getJdbcUrl());
-        populateTeamTable();
-        populateStudentTable();
+//        populateTeamTable();
+//        populateStudentTable();
     }
 
-    private void populateTeamTable() {
-        TeamDao teamDao = new TeamDao(ds);
-        Team team = new Team(
-                "green",
-                10
-        );
-        teamDao.insert(team);
-        team = new Team(
-                "red",
-                20
-        );
-        teamDao.insert(team);
-
-    }
-
-    private void populateStudentTable() {
-        StudentDao studentDao = new StudentDao(ds);
-
-        Student student = new Student(
-                "dima",
-                "dimin",
-                33,
-                10,
-                1
-        );
-        studentDao.insert(student);
-        student = new Student(
-                "vasia",
-                "vasia",
-                25,
-                15,
-                2
-        );
-        studentDao.insert(student);
-    }
+//    private void populateTeamTable() {
+//        TeamDao teamDao = new TeamDao(ds);
+//        Team team = new Team(
+//                "green",
+//                10
+//        );
+//        teamDao.insert(team);
+//        team = new Team(
+//                "red",
+//                20
+//        );
+//        teamDao.insert(team);
+//
+//    }
+//
+//    private void populateStudentTable() {
+//        StudentDao studentDao = new StudentDao(ds);
+//
+//        Student student = new Student(
+//                "dima",
+//                "dmitriev",
+//                33,
+//                10,
+//                1
+//        );
+//        studentDao.insert(student);
+//        student = new Student(
+//                "vasia",
+//                "vasilev",
+//                25,
+//                15,
+//                2
+//        );
+//        studentDao.insert(student);
+//    }
 
     private static DataSource getDataSource(String jdbcUrl) {
         BasicDataSource dataSource = new BasicDataSource();

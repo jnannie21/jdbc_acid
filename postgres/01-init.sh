@@ -20,4 +20,12 @@ psql --username admin --dbname postgres <<-EOSQL
       CONSTRAINT fk_team FOREIGN KEY(team_id) REFERENCES team(id)
     );
   COMMIT;
+
+  BEGIN;
+    insert into team (color, points) values ('green', 10);
+    insert into team (color, points) values ('red', 20);
+
+    insert into student (first_name, last_name, age, points, team_id) values ('dima', 'dmitriev', 33, 10, 1);
+    insert into student (first_name, last_name, age, points, team_id) values ('vasia', 'vasilev', 25, 15, 2);
+  COMMIT;
 EOSQL
