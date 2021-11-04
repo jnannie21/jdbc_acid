@@ -27,7 +27,7 @@ public class StudentDao implements Dao<Student> {
         }
     }
 
-    public void createTable(DataSource ds) {
+    private void createTable(DataSource ds) {
         try(Connection conn = ds.getConnection();
             Statement stmt = conn.createStatement();
         ) {
@@ -52,6 +52,7 @@ public class StudentDao implements Dao<Student> {
             System.out.println("Table student created...");
             populateTable();
         } catch (SQLException e) {
+            errorMsg = e.toString();
             e.printStackTrace();
         }
     }
@@ -89,12 +90,6 @@ public class StudentDao implements Dao<Student> {
     public List<Student> getAll() {
         List<Student> students = new ArrayList<>();
 
-//        String sql = "select s.id, s.first_name, s.last_name, s.age, s.points, s.team_id, t.color, t.points as team_points from " +
-//                tableName +
-//                " as s inner join " +
-//                TeamService.tableName +
-//                " as t on s.team_id = t.id order by s.id";
-
                 String sql = "select id, first_name, last_name, age, points, team_id from " +
                 tableName +
                 " order by id";
@@ -113,32 +108,16 @@ public class StudentDao implements Dao<Student> {
                         rs.getString("team_id")
                 );
 
-//                ResultSetMetaData rsmd = rs.getMetaData();
-//                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-//                    System.out.println(rsmd.getColumnName(i));
-//                    System.out.println(rsmd.getColumnLabel(i));
-//                }
-
-//                student.put("team_color", rs.getString("color"));
-//                student.put("team_points", rs.getString("team_points"));
-
                 students.add(student);
             }
         } catch (SQLException e) {
-            setErrorMsg(e.getMessage());
+            errorMsg = e.toString();
             e.printStackTrace();
         }
         return students;
     }
 
     public void insert(Student student) {
-//        String sql = "insert into student (first_name, last_name, age, points, team_id) values (" +
-//                "'" + student.getFirstName() + "', " +
-//                "'" + student.getLastName() + "', " +
-//                "'" + student.getAge() + "', " +
-//                "'" + student.getPoints() + "', " +
-//                "'" + student.getTeamId() + "'" +
-//                ");";
         String sql = "insert into student (first_name, last_name, age, points, team_id) values (?, ?, ?, ?, ?)";
 
         try (Connection conn = ds.getConnection();
@@ -169,20 +148,6 @@ public class StudentDao implements Dao<Student> {
     }
 
     public void update(Student student) {
-//        String sql = "update student set " +
-//                "first_name=" +
-//                "'" + student.getFirstName() + "', " +
-//                "last_name=" +
-//                "'" + student.getLastName() + "', " +
-//                "age=" +
-//                "'" + student.getAge() + "', " +
-//                "points=" +
-//                "'" + student.getPoints() + "', " +
-//                "team_id=" +
-//                "'" + student.getTeamId() + "'" +
-//                " where id=" +
-//                "'" + student.getId() + "'";
-
         String sql = "update student set first_name=?, last_name=?, age=?, points=?, team_id=? where id=?";
 
         try (Connection conn = ds.getConnection();
@@ -212,9 +177,9 @@ public class StudentDao implements Dao<Student> {
         return errorMsg;
     }
 
-    public void setErrorMsg(String errorMsg) {
-        this.errorMsg = errorMsg;
-    }
+//    public void setErrorMsg(String errorMsg) {
+//        this.errorMsg = errorMsg;
+//    }
 
     public void resetError() {
         errorMsg = null;

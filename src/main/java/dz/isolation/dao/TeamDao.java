@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamDao implements Dao<Team>{
+public class TeamDao implements Dao<Team> {
     public static final String tableName = "team";
 
     private DataSource ds;
@@ -44,6 +44,7 @@ public class TeamDao implements Dao<Team>{
             System.out.println("Table team created...");
             populateTable();
         } catch (SQLException e) {
+            errorMsg = e.toString();
             e.printStackTrace();
         }
     }
@@ -92,18 +93,12 @@ public class TeamDao implements Dao<Team>{
             }
         } catch (SQLException e) {
             errorMsg = e.toString();
-//            setErrorMsg(e.toString());
             e.printStackTrace();
         }
         return teams;
     }
 
     public void insert(Team team) {
-//        String sql = "insert into team (color, points) values (" +
-//                "'" + team.getColor() + "', " +
-//                "'" + team.getPoints() + "' " +
-//                ");";
-
         String sql = "insert into team (color, points) values (?, ?)";
 
         try (Connection conn = ds.getConnection();
@@ -134,14 +129,6 @@ public class TeamDao implements Dao<Team>{
     }
 
     public void update(Team team) {
-//        String sql = "update team set " +
-//                "color=" +
-//                "'" + team.getColor() + "', " +
-//                "points=" +
-//                "'" + team.getPoints() + "' " +
-//                " where id=" +
-//                "'" + team.getId() + "'";
-
         String sql = "update team set color=?, points=? where id=?";
 
         try (Connection conn = ds.getConnection();

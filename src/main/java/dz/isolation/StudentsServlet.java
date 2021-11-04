@@ -2,6 +2,7 @@ package dz.isolation;
 
 import dz.isolation.model.Student;
 import dz.isolation.model.Team;
+import dz.isolation.service.Service;
 import dz.isolation.service.StudentService;
 import dz.isolation.service.TeamService;
 
@@ -19,11 +20,11 @@ import java.util.List;
         urlPatterns = "/"
 )
 public class StudentsServlet extends HttpServlet {
-    private StudentService studentService;
-    private TeamService teamService;
+    private Service studentService;
+    private Service teamService;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         studentService = new StudentService();
         teamService = new TeamService();
     }
@@ -49,17 +50,17 @@ public class StudentsServlet extends HttpServlet {
 
     private void routeRequest(HttpServletRequest req) {
         if (req.getServletPath().equals("/change_student")) {
-            studentService.changeStudent(req);
+            studentService.update(req);
         } else if (req.getServletPath().equals("/delete_student")) {
-            studentService.deleteStudent(req);
+            studentService.delete(req);
         } else if (req.getServletPath().equals("/add_student")) {
-            studentService.addStudent(req);
+            studentService.insert(req);
         } else if (req.getServletPath().equals("/change_team")) {
-            teamService.changeTeam(req);
+            teamService.update(req);
         } else if (req.getServletPath().equals("/delete_team")) {
-            teamService.deleteTeam(req);
+            teamService.delete(req);
         } else if (req.getServletPath().equals("/add_team")) {
-            teamService.addTeam(req);
+            teamService.insert(req);
         }
     }
 
@@ -78,17 +79,6 @@ public class StudentsServlet extends HttpServlet {
         req.setAttribute("studentService", studentService);
         req.setAttribute("teamService", teamService);
     }
-
-
-//    private void createTables() throws ServletException {
-//        try {
-//            DataSource ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
-//            createTeamTable(ds);
-//            createStudentTable(ds);
-//        } catch (NamingException e) {
-//            throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
-//        }
-//    }
 
     private void resetErrors() {
         studentService.resetError();

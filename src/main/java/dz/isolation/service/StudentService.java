@@ -1,18 +1,16 @@
 package dz.isolation.service;
 
+import dz.isolation.dao.Dao;
 import dz.isolation.dao.StudentDao;
-import dz.isolation.dao.TeamDao;
 import dz.isolation.model.Student;
-import dz.isolation.model.Team;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-public class StudentService {
-    private StudentDao studentDao;
+public class StudentService implements Service<Student> {
+    private Dao studentDao;
 
     public StudentService() {
-        System.out.println("here we are");
         studentDao = new StudentDao(null);
     }
 
@@ -20,7 +18,7 @@ public class StudentService {
         return studentDao.getAll();
     }
 
-    public void addStudent(HttpServletRequest req) {
+    public void insert(HttpServletRequest req) {
         Student student = new Student(
                 req.getParameter("first_name"),
                 req.getParameter("last_name"),
@@ -31,7 +29,7 @@ public class StudentService {
         studentDao.insert(student);
     }
 
-    public void changeStudent(HttpServletRequest req) {
+    public void update(HttpServletRequest req) {
         Student student = new Student(
                 req.getParameter("id"),
                 req.getParameter("first_name"),
@@ -43,7 +41,7 @@ public class StudentService {
         studentDao.update(student);
     }
 
-    public void deleteStudent(HttpServletRequest req) {
+    public void delete(HttpServletRequest req) {
         studentDao.delete(req.getParameter("id"));
     }
 
