@@ -52,12 +52,14 @@ class UnitTests extends Mockito {
         when(reqMock.getParameter(Mockito.any())).thenReturn("1");
         when(reqMock.getRequestDispatcher("students.jsp")).thenReturn(new RequestDispatcher() {
             @Override
-            public void forward(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+            public void forward(ServletRequest servletRequest, ServletResponse servletResponse)
+                    throws ServletException, IOException {
                 resMock.getWriter().println("Students and teams tables");
             }
 
             @Override
-            public void include(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+            public void include(ServletRequest servletRequest, ServletResponse servletResponse)
+                    throws ServletException, IOException {
 
             }
         });

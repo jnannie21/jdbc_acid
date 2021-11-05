@@ -16,7 +16,15 @@ public class TeamDao implements Dao<Team> {
     /**
      * Table name.
      */
-    public static final String tableName = "team";
+    public static final String TABLE_NAME = "team";
+
+    /**
+     * Queries.
+     */
+    public static final String SELECT_ALL = "select id, color, points from " + TABLE_NAME + " order by id";
+    public static final String INSERT = "insert into team (color, points) values (?, ?)";
+    public static final String DELETE = "delete from team where id=?";
+    public static final String UPDATE = "update team set color=?, points=? where id=?";
 
     /**
      * DataSource object.
@@ -49,11 +57,8 @@ public class TeamDao implements Dao<Team> {
     public List<Team> getAll() throws SQLException {
         List<Team> teams = new ArrayList<>();
 
-        String sql = "select id, color, points from " +
-                tableName +
-                " order by id";
         try (Connection conn = ds.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
             ResultSet rs = stmt.executeQuery()
         ) {
             while (rs.next()) {
@@ -73,10 +78,8 @@ public class TeamDao implements Dao<Team> {
      * @param team Team entity to insert.
      */
     public void insert(Team team) throws SQLException {
-        String sql = "insert into team (color, points) values (?, ?)";
-
         try (Connection conn = ds.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
+             PreparedStatement stmt = conn.prepareStatement(INSERT);
         ) {
             stmt.setString(1, team.getColor());
             stmt.setInt(2, team.getPoints());
@@ -90,9 +93,8 @@ public class TeamDao implements Dao<Team> {
      * @param id id of record.
      */
     public void delete(int id) throws SQLException {
-        String sql = "delete from team where id=?";
         try (Connection conn = ds.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            PreparedStatement stmt = conn.prepareStatement(DELETE);
         ) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -105,10 +107,8 @@ public class TeamDao implements Dao<Team> {
      * @param team record to update.
      */
     public void update(Team team) throws SQLException {
-        String sql = "update team set color=?, points=? where id=?";
-
         try (Connection conn = ds.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
+             PreparedStatement stmt = conn.prepareStatement(UPDATE);
         ) {
             stmt.setString(1, team.getColor());
             stmt.setInt(2, team.getPoints());

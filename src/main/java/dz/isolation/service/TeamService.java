@@ -15,17 +15,13 @@ public class TeamService implements Service<Team> {
     /**
      * Dao for accessing team table.
      */
-    private TeamDao teamDao;
+    private Dao<Team> teamDao;
 
     /**
-     * Returns Dao in a lazy way.
-     * @return Teams Dao object.
+     * Default constructor.
      */
-    private Dao<Team> getDao() {
-        if (teamDao == null) {
-            teamDao = new TeamDao();
-        }
-        return teamDao;
+    public TeamService() {
+        teamDao = new TeamDao();
     }
 
     /**
@@ -33,7 +29,7 @@ public class TeamService implements Service<Team> {
      * @return List of Team.
      */
     public List<Team> getAll() throws SQLException {
-        return getDao().getAll();
+        return teamDao.getAll();
     }
 
     /**
@@ -45,7 +41,7 @@ public class TeamService implements Service<Team> {
                 req.getParameter("color"),
                 Integer.parseInt(req.getParameter("points"))
         );
-        getDao().insert(team);
+        teamDao.insert(team);
     }
 
     /**
@@ -58,7 +54,7 @@ public class TeamService implements Service<Team> {
                 req.getParameter("color"),
                 Integer.parseInt(req.getParameter("points"))
         );
-        getDao().update(team);
+        teamDao.update(team);
     }
 
     /**
@@ -66,6 +62,6 @@ public class TeamService implements Service<Team> {
      * @param req
      */
     public void delete(HttpServletRequest req) throws NumberFormatException, SQLException {
-        getDao().delete(Integer.parseInt(req.getParameter("id")));
+        teamDao.delete(Integer.parseInt(req.getParameter("id")));
     }
 }

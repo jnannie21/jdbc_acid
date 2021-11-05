@@ -18,14 +18,10 @@ public class StudentService implements Service<Student> {
     private Dao<Student> studentDao;
 
     /**
-     * Returns Dao in a lazy way.
-     * @return Students Dao object.
+     * Default constructor.
      */
-    private Dao<Student> getDao() {
-        if (studentDao == null) {
-            studentDao = new StudentDao();
-        }
-        return studentDao;
+    public StudentService() {
+        studentDao = new StudentDao();
     }
 
     /**
@@ -34,7 +30,7 @@ public class StudentService implements Service<Student> {
      */
     @Override
     public List<Student> getAll() throws SQLException {
-        return getDao().getAll();
+        return studentDao.getAll();
     }
 
     /**
@@ -50,7 +46,7 @@ public class StudentService implements Service<Student> {
                 Integer.parseInt(req.getParameter("points")),
                 Integer.parseInt(req.getParameter("team_id"))
         );
-        getDao().insert(student);
+        studentDao.insert(student);
     }
 
     /**
@@ -67,7 +63,7 @@ public class StudentService implements Service<Student> {
                 Integer.parseInt(req.getParameter("points")),
                 Integer.parseInt(req.getParameter("team_id"))
         );
-        getDao().update(student);
+        studentDao.update(student);
     }
 
     /**
@@ -76,6 +72,6 @@ public class StudentService implements Service<Student> {
      */
     @Override
     public void delete(HttpServletRequest req) throws NumberFormatException, SQLException {
-        getDao().delete(Integer.parseInt(req.getParameter("id")));
+        studentDao.delete(Integer.parseInt(req.getParameter("id")));
     }
 }

@@ -16,7 +16,15 @@ public class StudentDao implements Dao<Student> {
     /**
      * Table name.
      */
-    public static final String tableName = "student";
+
+    public static final String TABLE_NAME = "student";
+    /**
+     * Queries.
+     */
+    public static final String SELECT_ALL = "select id, first_name, last_name, age, points, team_id from " + TABLE_NAME + " order by id";
+    public static final String INSERT = "insert into student (first_name, last_name, age, points, team_id) values (?, ?, ?, ?, ?)";
+    public static final String DELETE = "delete from student where id=?";
+    public static final String UPDATE = "update student set first_name=?, last_name=?, age=?, points=?, team_id=? where id=?";
 
     /**
      * DataSource object.
@@ -50,12 +58,8 @@ public class StudentDao implements Dao<Student> {
     public List<Student> getAll() throws SQLException {
         List<Student> students = new ArrayList<>();
 
-                String sql = "select id, first_name, last_name, age, points, team_id from " +
-                tableName +
-                " order by id";
-
         try (Connection conn = ds.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            PreparedStatement stmt = conn.prepareStatement(SELECT_ALL);
             ResultSet rs = stmt.executeQuery();
         ) {
             while (rs.next()) {
@@ -80,10 +84,8 @@ public class StudentDao implements Dao<Student> {
      */
     @Override
     public void insert(Student student) throws SQLException {
-        String sql = "insert into student (first_name, last_name, age, points, team_id) values (?, ?, ?, ?, ?)";
-
         try (Connection conn = ds.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
+             PreparedStatement stmt = conn.prepareStatement(INSERT);
         ) {
             setValuesInStatement(stmt, student);
 
@@ -98,9 +100,8 @@ public class StudentDao implements Dao<Student> {
      */
     @Override
     public void delete(int id) throws SQLException {
-        String sql = "delete from student where id=?";
         try(Connection conn = ds.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            PreparedStatement stmt = conn.prepareStatement(DELETE);
         ) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -114,10 +115,8 @@ public class StudentDao implements Dao<Student> {
      */
     @Override
     public void update(Student student) throws SQLException {
-        String sql = "update student set first_name=?, last_name=?, age=?, points=?, team_id=? where id=?";
-
         try (Connection conn = ds.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
+             PreparedStatement stmt = conn.prepareStatement(UPDATE);
         ) {
             setValuesInStatement(stmt, student);
             stmt.setInt(6, student.getId());
