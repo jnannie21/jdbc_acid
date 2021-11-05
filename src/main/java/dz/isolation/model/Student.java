@@ -1,5 +1,8 @@
 package dz.isolation.model;
 
+/**
+ * Student's table entity.
+ */
 public class Student {
     private int id;
     private String firstName;

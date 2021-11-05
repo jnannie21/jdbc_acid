@@ -9,12 +9,30 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Dao class for operations with student table.
+ */
 public class StudentDao implements Dao<Student> {
+    /**
+     * Table name.
+     */
     public static final String tableName = "student";
 
+    /**
+     * DataSource object.
+     */
     private DataSource ds;
+
+    /**
+     * Internal error message.
+     */
     private String errorMsg;
 
+    /**
+     * Constructor which accepts DataSource as source of data, or null.
+     * If argument is null then jndi lookup used for getting data source.
+     * @param ds data source or null.
+     */
     public StudentDao(DataSource ds) {
         try {
             if ((this.ds = ds) == null) {
@@ -26,6 +44,11 @@ public class StudentDao implements Dao<Student> {
         }
     }
 
+    /**
+     * Get all records as Student objects in List.
+     * @return List of Student s
+     */
+    @Override
     public List<Student> getAll() {
         List<Student> students = new ArrayList<>();
 
@@ -56,6 +79,11 @@ public class StudentDao implements Dao<Student> {
         return students;
     }
 
+    /**
+     * Insert new record in student table.
+     * @param student Student entity to insert.
+     */
+    @Override
     public void insert(Student student) {
         String sql = "insert into student (first_name, last_name, age, points, team_id) values (?, ?, ?, ?, ?)";
 
@@ -72,6 +100,11 @@ public class StudentDao implements Dao<Student> {
         }
     }
 
+    /**
+     * Delete record by id.
+     * @param id id of record.
+     */
+    @Override
     public void delete(int id) {
         String sql = "delete from student where id=?";
         try(Connection conn = ds.getConnection();
@@ -86,6 +119,11 @@ public class StudentDao implements Dao<Student> {
         }
     }
 
+    /**
+     * Update record in table.
+     * @param student record to update.
+     */
+    @Override
     public void update(Student student) {
         String sql = "update student set first_name=?, last_name=?, age=?, points=?, team_id=? where id=?";
 
@@ -103,6 +141,13 @@ public class StudentDao implements Dao<Student> {
         }
     }
 
+    /**
+     * Set values in statement.
+     * @param stmt
+     * @param student
+     * @throws SQLException
+     * @throws NumberFormatException
+     */
     private void setValuesInStatement(PreparedStatement stmt, Student student)
             throws SQLException, NumberFormatException {
         stmt.setString(1, student.getFirstName());
@@ -112,10 +157,19 @@ public class StudentDao implements Dao<Student> {
         stmt.setInt(5, student.getTeamId());
     }
 
+    /**
+     * Get internal error message.
+     * @return error message.
+     */
+    @Override
     public String getErrorMsg() {
         return errorMsg;
     }
 
+    /**
+     * Set internal message to null.
+     */
+    @Override
     public void resetError() {
         errorMsg = null;
     }

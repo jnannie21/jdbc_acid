@@ -9,12 +9,30 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Dao class for operations with team table.
+ */
 public class TeamDao implements Dao<Team> {
+    /**
+     * Table name.
+     */
     public static final String tableName = "team";
 
+    /**
+     * DataSource object.
+     */
     private DataSource ds;
+
+    /**
+     * Internal error message.
+     */
     private String errorMsg;
 
+    /**
+     * Constructor which accepts DataSource as source of data, or null.
+     * If argument is null then jndi lookup used for getting data source.
+     * @param ds data source or null.
+     */
     public TeamDao(DataSource ds) {
         try {
             if ((this.ds = ds) == null) {
@@ -25,6 +43,10 @@ public class TeamDao implements Dao<Team> {
         }
     }
 
+    /**
+     * Get all records as Team objects in List.
+     * @return List of Team s
+     */
     public List<Team> getAll() {
         List<Team> teams = new ArrayList<>();
 
@@ -50,6 +72,10 @@ public class TeamDao implements Dao<Team> {
         return teams;
     }
 
+    /**
+     * Insert new record in team table.
+     * @param team Team entity to insert.
+     */
     public void insert(Team team) {
         String sql = "insert into team (color, points) values (?, ?)";
 
@@ -66,6 +92,10 @@ public class TeamDao implements Dao<Team> {
         }
     }
 
+    /**
+     * Delete record by id.
+     * @param id id of record.
+     */
     public void delete(int id) {
         String sql = "delete from team where id=?";
         try(Connection conn = ds.getConnection();
@@ -80,6 +110,10 @@ public class TeamDao implements Dao<Team> {
         }
     }
 
+    /**
+     * Update record in table.
+     * @param team record to update.
+     */
     public void update(Team team) {
         String sql = "update team set color=?, points=? where id=?";
 
@@ -97,10 +131,17 @@ public class TeamDao implements Dao<Team> {
         }
     }
 
+    /**
+     * Get internal error message.
+     * @return error message.
+     */
     public String getErrorMsg() {
         return errorMsg;
     }
 
+    /**
+     * Set internal message to null.
+     */
     public void resetError() {
         errorMsg = null;
     }

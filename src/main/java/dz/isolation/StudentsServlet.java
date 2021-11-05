@@ -13,22 +13,44 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller for simple web application.
+ * @author Dmitry Polushkin
+ */
 @WebServlet(
         name = "studentsservlet",
         urlPatterns = "/"
 )
 public class StudentsServlet extends HttpServlet {
+    /**
+     * Service for getting students data from db.
+     */
     private Service studentService;
+
+    /**
+     * Service for getting teams data from db.
+     */
     private Service teamService;
 
+    /**
+     * Creates services.
+     */
     @Override
     public void init() {
         studentService = new StudentService();
         teamService = new TeamService();
     }
 
+    /**
+     * Returns all tables in one view.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -37,6 +59,13 @@ public class StudentsServlet extends HttpServlet {
         generateView(req, resp);
     }
 
+    /**
+     * Routes and returns view depending on url.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -48,6 +77,10 @@ public class StudentsServlet extends HttpServlet {
         generateView(req, resp);
     }
 
+    /**
+     * Routing to service action.
+     * @param req
+     */
     private void routeRequest(HttpServletRequest req) {
         if (req.getServletPath().equals("/update_student")) {
             studentService.update(req);
@@ -64,6 +97,13 @@ public class StudentsServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Forwards a request from a servlet to view.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     private void generateView(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         setReqAttributes(req);
@@ -71,6 +111,10 @@ public class StudentsServlet extends HttpServlet {
         view.forward(req, resp);
     }
 
+    /**
+     * Setting attributes in HttpServletRequest.
+     * @param req
+     */
     private void setReqAttributes(HttpServletRequest req) {
         List<Student> students = studentService.getAll();
         req.setAttribute("students", students);
@@ -80,6 +124,9 @@ public class StudentsServlet extends HttpServlet {
         req.setAttribute("teamService", teamService);
     }
 
+    /**
+     * Reset services internal errors.
+     */
     private void resetErrors() {
         studentService.resetError();
         teamService.resetError();
