@@ -10,6 +10,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.List;
 
 @Testcontainers
@@ -29,45 +30,7 @@ class IntegrationTests {
         container.start();
 
         ds = getDataSource(container.getJdbcUrl());
-//        populateTeamTable();
-//        populateStudentTable();
     }
-
-//    private void populateTeamTable() {
-//        TeamDao teamDao = new TeamDao(ds);
-//        Team team = new Team(
-//                "green",
-//                10
-//        );
-//        teamDao.insert(team);
-//        team = new Team(
-//                "red",
-//                20
-//        );
-//        teamDao.insert(team);
-//
-//    }
-//
-//    private void populateStudentTable() {
-//        StudentDao studentDao = new StudentDao(ds);
-//
-//        Student student = new Student(
-//                "dima",
-//                "dmitriev",
-//                33,
-//                10,
-//                1
-//        );
-//        studentDao.insert(student);
-//        student = new Student(
-//                "vasia",
-//                "vasilev",
-//                25,
-//                15,
-//                2
-//        );
-//        studentDao.insert(student);
-//    }
 
     private static DataSource getDataSource(String jdbcUrl) {
         BasicDataSource dataSource = new BasicDataSource();
@@ -84,7 +47,7 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_AddingStudentRecords_Success() {
+    public void dataBaseInitialState_AddingStudentRecords_Success() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
@@ -103,7 +66,7 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_GettingStudentRecords_Success() {
+    public void dataBaseInitialState_GettingStudentRecords_Success() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         List<Student> students = studentDao.getAll();
@@ -113,7 +76,7 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_UpdatingStudentRecords_Success() {
+    public void dataBaseInitialState_UpdatingStudentRecords_Success() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
@@ -133,7 +96,7 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_DeletingStudentRecords_Success() {
+    public void dataBaseInitialState_DeletingStudentRecords_Success() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         studentDao.delete(1);
@@ -145,7 +108,7 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_ViolateAgeConstraint_Failure() {
+    public void dataBaseInitialState_ViolateAgeConstraint_Throws() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
@@ -156,14 +119,18 @@ class IntegrationTests {
                 2
         );
 
-        studentDao.insert(newStudent);
+        Assertions.assertThrows(
+                SQLException.class,
+                () -> studentDao.insert(newStudent),
+                "Expected studentDao.insert() to throw, but it didn't"
+        );
 
         List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
-    public void dataBaseInitialState_ViolateForeignKeyConstraint_Failure() {
+    public void dataBaseInitialState_ViolateForeignKeyConstraint_Throws() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
@@ -174,14 +141,18 @@ class IntegrationTests {
                 3
         );
 
-        studentDao.insert(newStudent);
+        Assertions.assertThrows(
+                SQLException.class,
+                () -> studentDao.insert(newStudent),
+                "Expected studentDao.insert() to throw, but it didn't"
+        );
 
         List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
-    public void dataBaseInitialState_ViolateFirstNameNotNullConstraint_Failure() {
+    public void dataBaseInitialState_ViolateFirstNameNotNullConstraint_Throws() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
@@ -192,14 +163,18 @@ class IntegrationTests {
                 2
         );
 
-        studentDao.insert(newStudent);
+        Assertions.assertThrows(
+                SQLException.class,
+                () -> studentDao.insert(newStudent),
+                "Expected studentDao.insert() to throw, but it didn't"
+        );
 
         List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
-    public void dataBaseInitialState_ViolateFirstNameNotEmptyConstraint_Failure() {
+    public void dataBaseInitialState_ViolateFirstNameNotEmptyConstraint_Throws() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
@@ -210,14 +185,18 @@ class IntegrationTests {
                 2
         );
 
-        studentDao.insert(newStudent);
+        Assertions.assertThrows(
+                SQLException.class,
+                () -> studentDao.insert(newStudent),
+                "Expected studentDao.insert() to throw, but it didn't"
+        );
 
         List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
-    public void dataBaseInitialState_ViolateLastNameNotNullConstraint_Failure() {
+    public void dataBaseInitialState_ViolateLastNameNotNullConstraint_Throws() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
@@ -228,14 +207,18 @@ class IntegrationTests {
                 2
         );
 
-        studentDao.insert(newStudent);
+        Assertions.assertThrows(
+                SQLException.class,
+                () -> studentDao.insert(newStudent),
+                "Expected studentDao.insert() to throw, but it didn't"
+        );
 
         List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
-    public void dataBaseInitialState_ViolateLastNameNotEmptyConstraint_Failure() {
+    public void dataBaseInitialState_ViolateLastNameNotEmptyConstraint_Throws() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
@@ -246,14 +229,18 @@ class IntegrationTests {
                 2
         );
 
-        studentDao.insert(newStudent);
+        Assertions.assertThrows(
+                SQLException.class,
+                () -> studentDao.insert(newStudent),
+                "Expected studentDao.insert() to throw, but it didn't"
+        );
 
         List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
-    public void dataBaseInitialState_ViolateAgeBiggerThanZeroConstraint_Failure() {
+    public void dataBaseInitialState_ViolateAgeBiggerThanZeroConstraint_Throws() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         Student newStudent = new Student(
@@ -264,14 +251,18 @@ class IntegrationTests {
                 2
         );
 
-        studentDao.insert(newStudent);
+        Assertions.assertThrows(
+                SQLException.class,
+                () -> studentDao.insert(newStudent),
+                "Expected studentDao.insert() to throw, but it didn't"
+        );
 
         List<Student> students = studentDao.getAll();
         Assertions.assertEquals(2, students.size());
     }
 
     @Test
-    public void dataBaseInitialState_AddingTeamRecords_Success() {
+    public void dataBaseInitialState_AddingTeamRecords_Success() throws Exception {
         TeamDao teamDao = new TeamDao(ds);
 
         Team newTeam = new Team(
@@ -287,7 +278,7 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_GettingTeamRecords_Success() {
+    public void dataBaseInitialState_GettingTeamRecords_Success() throws Exception {
         StudentDao studentDao = new StudentDao(ds);
 
         TeamDao teamDao = new TeamDao(ds);
@@ -297,7 +288,7 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_UpdatingTeamRecords_Success() {
+    public void dataBaseInitialState_UpdatingTeamRecords_Success() throws Exception {
         TeamDao teamDao = new TeamDao(ds);
 
         Team newTeam = new Team(
@@ -314,7 +305,7 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_DeletingTeamRecords_Success() {
+    public void dataBaseInitialState_DeletingTeamRecords_Success() throws Exception {
         TeamDao teamDao = new TeamDao(ds);
         StudentDao studentDao = new StudentDao(ds);
 
@@ -328,10 +319,15 @@ class IntegrationTests {
     }
 
     @Test
-    public void dataBaseInitialState_ViolateForeignKeyConstraintDeletingTeam_Failure() {
+    public void dataBaseInitialState_ViolateForeignKeyConstraintDeletingTeam_Throws() throws Exception {
         TeamDao teamDao = new TeamDao(ds);
 
-        teamDao.delete(1);
+        Assertions.assertThrows(
+                SQLException.class,
+                () -> teamDao.delete(1),
+                "Expected teamDao.delete() to throw, but it didn't"
+        );
+
 
         List<Team> teams = teamDao.getAll();
         Assertions.assertEquals(2, teams.size());

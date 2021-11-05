@@ -24,30 +24,29 @@ public class TeamDao implements Dao<Team> {
     private DataSource ds;
 
     /**
-     * Internal error message.
+     * Default constructor.
      */
-    private String errorMsg;
-
-    /**
-     * Constructor which accepts DataSource as source of data, or null.
-     * If argument is null then jndi lookup used for getting data source.
-     * @param ds data source or null.
-     */
-    public TeamDao(DataSource ds) {
+    public TeamDao() {
         try {
-            if ((this.ds = ds) == null) {
-                this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres");
-            }
+            this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres");
         } catch (NamingException e) {
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
     }
 
     /**
+     * Constructor which accepts DataSource as source of data.
+     * @param ds data source.
+     */
+    public TeamDao(DataSource ds) {
+        this.ds = ds;
+    }
+
+    /**
      * Get all records as Team objects in List.
      * @return List of Team s
      */
-    public List<Team> getAll() {
+    public List<Team> getAll() throws SQLException {
         List<Team> teams = new ArrayList<>();
 
         String sql = "select id, color, points from " +
@@ -65,9 +64,6 @@ public class TeamDao implements Dao<Team> {
                 );
                 teams.add(team);
             }
-        } catch (SQLException e) {
-            errorMsg = e.toString();
-            e.printStackTrace();
         }
         return teams;
     }
@@ -76,7 +72,7 @@ public class TeamDao implements Dao<Team> {
      * Insert new record in team table.
      * @param team Team entity to insert.
      */
-    public void insert(Team team) {
+    public void insert(Team team) throws SQLException {
         String sql = "insert into team (color, points) values (?, ?)";
 
         try (Connection conn = ds.getConnection();
@@ -86,9 +82,6 @@ public class TeamDao implements Dao<Team> {
             stmt.setInt(2, team.getPoints());
             stmt.executeUpdate();
             System.out.println("Team record inserted successfully");
-        } catch (SQLException e) {
-            errorMsg = e.toString();
-            e.printStackTrace();
         }
     }
 
@@ -96,17 +89,14 @@ public class TeamDao implements Dao<Team> {
      * Delete record by id.
      * @param id id of record.
      */
-    public void delete(int id) {
+    public void delete(int id) throws SQLException {
         String sql = "delete from team where id=?";
-        try(Connection conn = ds.getConnection();
+        try (Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
         ) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
-        } catch (SQLException e) {
-            errorMsg = e.toString();
-            e.printStackTrace();
         }
     }
 
@@ -114,7 +104,7 @@ public class TeamDao implements Dao<Team> {
      * Update record in table.
      * @param team record to update.
      */
-    public void update(Team team) {
+    public void update(Team team) throws SQLException {
         String sql = "update team set color=?, points=? where id=?";
 
         try (Connection conn = ds.getConnection();
@@ -125,24 +115,6 @@ public class TeamDao implements Dao<Team> {
             stmt.setInt(3, team.getId());
             stmt.executeUpdate();
             System.out.println("Record " + team.getId() + " updated successfully");
-        } catch (SQLException e) {
-            errorMsg = e.toString();
-            e.printStackTrace();
         }
-    }
-
-    /**
-     * Get internal error message.
-     * @return error message.
-     */
-    public String getErrorMsg() {
-        return errorMsg;
-    }
-
-    /**
-     * Set internal message to null.
-     */
-    public void resetError() {
-        errorMsg = null;
     }
 }

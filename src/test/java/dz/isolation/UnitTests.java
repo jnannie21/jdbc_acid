@@ -79,12 +79,10 @@ class UnitTests extends Mockito {
 
 
 
-    private void commonFlow() {
-        Mockito.verify(studentServiceMock).resetError();
+    private void commonFlow() throws Exception {
         Mockito.verify(studentServiceMock).getAll();
-        Mockito.verify(teamServiceMock).resetError();
         Mockito.verify(teamServiceMock).getAll();
-        Mockito.verify(reqMock, Mockito.times(4)).setAttribute(Mockito.any(), Mockito.any());
+        Mockito.verify(reqMock, Mockito.times(2)).setAttribute(Mockito.any(), Mockito.any());
         Mockito.verify(reqMock).getRequestDispatcher(Mockito.any());
         assertTrue(stringWriter.toString().contains("Students and teams tables"));
     }
@@ -166,14 +164,14 @@ class UnitTests extends Mockito {
 
     // students services
     @Test
-    public void studentService_CheckGetAllMethod_Success() {
+    public void studentService_CheckGetAllMethod_Success() throws Exception {
         studentService.getAll();
 
         Mockito.verify(studentDaoMock).getAll();
     }
 
     @Test
-    public void studentService_CheckInsertMethod_Success() {
+    public void studentService_CheckInsertMethod_Success() throws Exception {
         studentService.insert(reqMock);
 
         Mockito.verify(reqMock, Mockito.times(5)).getParameter(Mockito.any());
@@ -181,7 +179,7 @@ class UnitTests extends Mockito {
     }
 
     @Test
-    public void studentService_CheckUpdateMethod_Success() {
+    public void studentService_CheckUpdateMethod_Success() throws Exception {
         studentService.update(reqMock);
 
         Mockito.verify(reqMock, Mockito.times(6)).getParameter(Mockito.any());
@@ -189,36 +187,23 @@ class UnitTests extends Mockito {
     }
 
     @Test
-    public void studentService_CheckDeleteMethod_Success() {
+    public void studentService_CheckDeleteMethod_Success() throws Exception {
         studentService.delete(reqMock);
 
         Mockito.verify(studentDaoMock).delete(Mockito.anyInt());
     }
 
-    @Test
-    public void studentService_CheckGetErrorMsgMethod_Success() {
-        Assertions.assertNull(studentService.getErrorMsg());
-    }
-
-    @Test
-    public void studentService_CheckResetErrorMethod_Success() {
-        studentService.resetError();
-
-        Mockito.verify(studentDaoMock).resetError();
-        Assertions.assertNull(studentService.getErrorMsg());
-    }
-
 
     // teams services
     @Test
-    public void teamService_CheckGetAllMethod_Success() {
+    public void teamService_CheckGetAllMethod_Success() throws Exception {
         teamService.getAll();
 
         Mockito.verify(teamDaoMock).getAll();
     }
 
     @Test
-    public void teamService_CheckInsertMethod_Success() {
+    public void teamService_CheckInsertMethod_Success() throws Exception {
         teamService.insert(reqMock);
 
         Mockito.verify(reqMock, Mockito.times(2)).getParameter(Mockito.any());
@@ -226,7 +211,7 @@ class UnitTests extends Mockito {
     }
 
     @Test
-    public void teamService_CheckUpdateMethod_Success() {
+    public void teamService_CheckUpdateMethod_Success() throws Exception {
         teamService.update(reqMock);
 
         Mockito.verify(reqMock, Mockito.times(3)).getParameter(Mockito.any());
@@ -234,22 +219,9 @@ class UnitTests extends Mockito {
     }
 
     @Test
-    public void teamService_CheckDeleteMethod_Success() {
+    public void teamService_CheckDeleteMethod_Success() throws Exception {
         teamService.delete(reqMock);
 
         Mockito.verify(teamDaoMock).delete(Mockito.anyInt());
-    }
-
-    @Test
-    public void teamService_CheckGetErrorMsgMethod_Success() {
-        Assertions.assertNull(teamService.getErrorMsg());
-    }
-
-    @Test
-    public void teamService_CheckResetErrorMethod_Success() {
-        teamService.resetError();
-
-        Mockito.verify(teamDaoMock).resetError();
-        Assertions.assertNull(teamService.getErrorMsg());
     }
 }

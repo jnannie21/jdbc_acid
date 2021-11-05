@@ -11,16 +11,9 @@
 <body>
     <div style="font-size: larger; color: brown">
             <%
-                StudentService studentService = (StudentService) request.getAttribute("studentService");
-                TeamService teamService = (TeamService) request.getAttribute("teamService");
-                String studentServiceError = studentService.getErrorMsg();
-                String teamServiceError = teamService.getErrorMsg();
-
-                if (studentServiceError != null) {
-                    out.print(studentServiceError);
-                }
-                if (teamServiceError != null) {
-                    out.print(teamServiceError);
+                String error = (String) request.getAttribute("error");
+                if (error != null) {
+                    out.print(error);
                 }
             %>
     </div>

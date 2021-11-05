@@ -24,24 +24,22 @@ public class StudentDao implements Dao<Student> {
     private DataSource ds;
 
     /**
-     * Internal error message.
+     * Default constructor.
      */
-    private String errorMsg;
-
-    /**
-     * Constructor which accepts DataSource as source of data, or null.
-     * If argument is null then jndi lookup used for getting data source.
-     * @param ds data source or null.
-     */
-    public StudentDao(DataSource ds) {
+    public StudentDao() {
         try {
-            if ((this.ds = ds) == null) {
-                this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
-            }
+            this.ds = (DataSource) new InitialContext().lookup( "java:/comp/env/jdbc/postgres" );
         } catch (NamingException e) {
-            errorMsg = e.toString();
             throw new IllegalStateException("jdbc/postgres is missing in JNDI!", e);
         }
+    }
+
+    /**
+     * Constructor which accepts DataSource as source of data.
+     * @param ds data source.
+     */
+    public StudentDao(DataSource ds) {
+        this.ds = ds;
     }
 
     /**
@@ -49,7 +47,7 @@ public class StudentDao implements Dao<Student> {
      * @return List of Student s
      */
     @Override
-    public List<Student> getAll() {
+    public List<Student> getAll() throws SQLException {
         List<Student> students = new ArrayList<>();
 
                 String sql = "select id, first_name, last_name, age, points, team_id from " +
@@ -72,9 +70,6 @@ public class StudentDao implements Dao<Student> {
 
                 students.add(student);
             }
-        } catch (SQLException e) {
-            errorMsg = e.toString();
-            e.printStackTrace();
         }
         return students;
     }
@@ -84,7 +79,7 @@ public class StudentDao implements Dao<Student> {
      * @param student Student entity to insert.
      */
     @Override
-    public void insert(Student student) {
+    public void insert(Student student) throws SQLException {
         String sql = "insert into student (first_name, last_name, age, points, team_id) values (?, ?, ?, ?, ?)";
 
         try (Connection conn = ds.getConnection();
@@ -94,9 +89,6 @@ public class StudentDao implements Dao<Student> {
 
             stmt.executeUpdate();
             System.out.println("Student record inserted successfully");
-        } catch (NumberFormatException | SQLException e) {
-            errorMsg = e.toString();
-            e.printStackTrace();
         }
     }
 
@@ -105,7 +97,7 @@ public class StudentDao implements Dao<Student> {
      * @param id id of record.
      */
     @Override
-    public void delete(int id) {
+    public void delete(int id) throws SQLException {
         String sql = "delete from student where id=?";
         try(Connection conn = ds.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -113,9 +105,6 @@ public class StudentDao implements Dao<Student> {
             stmt.setInt(1, id);
             stmt.executeUpdate();
             System.out.println("Record " + id + " deleted successfully");
-        } catch (NumberFormatException | SQLException e) {
-            errorMsg = e.toString();
-            e.printStackTrace();
         }
     }
 
@@ -124,7 +113,7 @@ public class StudentDao implements Dao<Student> {
      * @param student record to update.
      */
     @Override
-    public void update(Student student) {
+    public void update(Student student) throws SQLException {
         String sql = "update student set first_name=?, last_name=?, age=?, points=?, team_id=? where id=?";
 
         try (Connection conn = ds.getConnection();
@@ -135,9 +124,6 @@ public class StudentDao implements Dao<Student> {
 
             stmt.executeUpdate();
             System.out.println("Record " + student.getId() + " updated successfully");
-        } catch (NumberFormatException | SQLException e) {
-            errorMsg = e.toString();
-            e.printStackTrace();
         }
     }
 
@@ -155,22 +141,5 @@ public class StudentDao implements Dao<Student> {
         stmt.setInt(3, student.getAge());
         stmt.setInt(4, student.getPoints());
         stmt.setInt(5, student.getTeamId());
-    }
-
-    /**
-     * Get internal error message.
-     * @return error message.
-     */
-    @Override
-    public String getErrorMsg() {
-        return errorMsg;
-    }
-
-    /**
-     * Set internal message to null.
-     */
-    @Override
-    public void resetError() {
-        errorMsg = null;
     }
 }

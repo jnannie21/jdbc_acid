@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -54,8 +54,6 @@ public class StudentsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        resetErrors();
-
         generateView(req, resp);
     }
 
@@ -70,8 +68,6 @@ public class StudentsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        resetErrors();
-
         routeRequest(req);
 
         generateView(req, resp);
@@ -82,19 +78,27 @@ public class StudentsServlet extends HttpServlet {
      * @param req
      */
     private void routeRequest(HttpServletRequest req) {
-        if (req.getServletPath().equals("/update_student")) {
-            studentService.update(req);
-        } else if (req.getServletPath().equals("/delete_student")) {
-            studentService.delete(req);
-        } else if (req.getServletPath().equals("/insert_student")) {
-            studentService.insert(req);
-        } else if (req.getServletPath().equals("/update_team")) {
-            teamService.update(req);
-        } else if (req.getServletPath().equals("/delete_team")) {
-            teamService.delete(req);
-        } else if (req.getServletPath().equals("/insert_team")) {
-            teamService.insert(req);
+        try {
+            if (req.getServletPath().equals("/update_student")) {
+                studentService.update(req);
+            } else if (req.getServletPath().equals("/delete_student")) {
+                studentService.delete(req);
+            } else if (req.getServletPath().equals("/insert_student")) {
+                studentService.insert(req);
+            } else if (req.getServletPath().equals("/update_team")) {
+                teamService.update(req);
+            } else if (req.getServletPath().equals("/delete_team")) {
+                teamService.delete(req);
+            } else if (req.getServletPath().equals("/insert_team")) {
+                teamService.insert(req);
+            }
+        } catch (NumberFormatException | SQLException e) {
+            setErrorMsg(req, e);
         }
+    }
+
+    private void setErrorMsg(HttpServletRequest req, Exception e) {
+        req.setAttribute("error", e.toString());
     }
 
     /**
@@ -106,7 +110,13 @@ public class StudentsServlet extends HttpServlet {
      */
     private void generateView(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        setReqAttributes(req);
+
+        try {
+            setReqAttributes(req);
+        } catch (SQLException e) {
+            setErrorMsg(req, e);
+        }
+
         RequestDispatcher view = req.getRequestDispatcher("students.jsp");
         view.forward(req, resp);
     }
@@ -115,21 +125,10 @@ public class StudentsServlet extends HttpServlet {
      * Setting attributes in HttpServletRequest.
      * @param req
      */
-    private void setReqAttributes(HttpServletRequest req) {
+    private void setReqAttributes(HttpServletRequest req) throws SQLException {
         List<Student> students = studentService.getAll();
         req.setAttribute("students", students);
         List<Team> teams = teamService.getAll();
         req.setAttribute("teams", teams);
-        req.setAttribute("studentService", studentService);
-        req.setAttribute("teamService", teamService);
     }
-
-    /**
-     * Reset services internal errors.
-     */
-    private void resetErrors() {
-        studentService.resetError();
-        teamService.resetError();
-    }
-
 }
