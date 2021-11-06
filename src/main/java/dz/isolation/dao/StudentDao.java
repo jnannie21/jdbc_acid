@@ -21,6 +21,11 @@ public class StudentDao implements Dao<Student> {
     public static final String TABLE_NAME = "student";
 
     /**
+     * Max team size.
+     */
+    public static final int MAX_TEAM_SIZE = 3;
+
+    /**
      * Queries.
      */
     public static final String COUNT_USERS_IN_TEAM = "select count(*) from " + TABLE_NAME + " where team_id=?";
@@ -99,11 +104,11 @@ public class StudentDao implements Dao<Student> {
             conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 
             ResultSet rs = countUsersInTeamStmt.executeQuery();
-            if (rs.next() && rs.getInt("count") < 3) {
+            if (rs.next() && rs.getInt("count") < MAX_TEAM_SIZE) {
                 stmt.executeUpdate();
                 System.out.println("Student record inserted successfully");
             } else {
-                throw new DaoException("Team can't contain more than three students");
+                throw new DaoException("Team can't contain more than " + MAX_TEAM_SIZE + " students");
             }
 
             conn.commit();
