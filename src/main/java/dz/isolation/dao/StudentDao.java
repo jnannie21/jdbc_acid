@@ -1,5 +1,6 @@
 package dz.isolation.dao;
 
+import dz.isolation.exception.DaoException;
 import dz.isolation.model.Student;
 
 import javax.naming.InitialContext;
@@ -13,14 +14,16 @@ import java.util.List;
  * Dao class for operations with student table.
  */
 public class StudentDao implements Dao<Student> {
+
     /**
      * Table name.
      */
-
     public static final String TABLE_NAME = "student";
+
     /**
      * Queries.
      */
+    public static final String COUNT_USERS_IN_TEAM = "select count(*) from " + TABLE_NAME + " where team_id=?";
     public static final String SELECT_ALL = "select id, first_name, last_name, age, points, team_id from " + TABLE_NAME + " order by id";
     public static final String INSERT = "insert into student (first_name, last_name, age, points, team_id) values (?, ?, ?, ?, ?)";
     public static final String DELETE = "delete from student where id=?";
@@ -83,14 +86,27 @@ public class StudentDao implements Dao<Student> {
      * @param student Student entity to insert.
      */
     @Override
-    public void insert(Student student) throws SQLException {
+    public void insert(Student student) throws SQLException, DaoException {
         try (Connection conn = ds.getConnection();
+             PreparedStatement countUsersInTeamStmt = conn.prepareStatement(COUNT_USERS_IN_TEAM);
              PreparedStatement stmt = conn.prepareStatement(INSERT);
         ) {
             setValuesInStatement(stmt, student);
 
-            stmt.executeUpdate();
-            System.out.println("Student record inserted successfully");
+            countUsersInTeamStmt.setInt(1, student.getTeamId());
+
+            conn.setAutoCommit(false);
+            conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+
+            ResultSet rs = countUsersInTeamStmt.executeQuery();
+            if (rs.next() && rs.getInt("count") < 3) {
+                stmt.executeUpdate();
+                System.out.println("Student record inserted successfully");
+            } else {
+                throw new DaoException("Team can't contain more than three students");
+            }
+
+            conn.commit();
         }
     }
 

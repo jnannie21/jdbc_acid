@@ -2,6 +2,7 @@ package dz.isolation.service;
 
 import dz.isolation.dao.Dao;
 import dz.isolation.dao.StudentDao;
+import dz.isolation.exception.DaoException;
 import dz.isolation.model.Student;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +39,7 @@ public class StudentService implements Service<Student> {
      * @param req
      */
     @Override
-    public void insert(HttpServletRequest req) throws NumberFormatException, SQLException {
+    public void insert(HttpServletRequest req) throws NumberFormatException, SQLException, DaoException {
         Student student = new Student(
                 req.getParameter("first_name"),
                 req.getParameter("last_name"),

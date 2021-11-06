@@ -13,6 +13,7 @@ import java.util.List;
  * Dao class for operations with team table.
  */
 public class TeamDao implements Dao<Team> {
+
     /**
      * Table name.
      */

@@ -1,5 +1,6 @@
 package dz.isolation;
 
+import dz.isolation.exception.DaoException;
 import dz.isolation.model.Student;
 import dz.isolation.model.Team;
 import dz.isolation.service.Service;
@@ -92,7 +93,7 @@ public class StudentsServlet extends HttpServlet {
             } else if (req.getServletPath().equals("/insert_team")) {
                 teamService.insert(req);
             }
-        } catch (NumberFormatException | SQLException e) {
+        } catch (NumberFormatException | SQLException | DaoException e) {
             setErrorMsg(req, e);
         }
     }

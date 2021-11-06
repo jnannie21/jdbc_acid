@@ -2,6 +2,7 @@ package dz.isolation.service;
 
 import dz.isolation.dao.Dao;
 import dz.isolation.dao.TeamDao;
+import dz.isolation.exception.DaoException;
 import dz.isolation.model.Team;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +37,8 @@ public class TeamService implements Service<Team> {
      * Create from HttpServletRequest and insert to db new team.
      * @param req
      */
-    public void insert(HttpServletRequest req) throws NumberFormatException, SQLException {
+    public void insert(HttpServletRequest req)
+            throws NumberFormatException, SQLException, DaoException {
         Team team = new Team(
                 req.getParameter("color"),
                 Integer.parseInt(req.getParameter("points"))
